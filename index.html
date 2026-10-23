@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f5f8b">
+<title>Supply Orders</title>
+<style>
+:root{
+  --bg:#f5f4f0;--surface:#fff;--surface-2:#efede7;--text:#1c1c1a;--muted:#6a6760;--line:#e2dfd7;
+  --accent:#1f5f8b;--accent-ink:#fff;--accent-soft:#e3eef6;
+  --over:#a8261d;--over-bg:#fbe8e5;--soon:#7d5300;--soon-bg:#fcf0d4;--ok:#2d6738;--ok-bg:#e4f1e6;
+  --never:#5d5a54;--never-bg:#ecebe7;--onord:#4b3c96;--onord-bg:#ebe8fa;
+  --radius:12px;--shadow:0 1px 2px rgba(0,0,0,.05),0 2px 8px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151514;--surface:#1f1f1d;--surface-2:#282825;--text:#ecebe6;--muted:#a19e96;--line:#34332f;
+  --accent:#6fb0dd;--accent-ink:#0d1a24;--accent-soft:#1b2c38;
+  --over:#f08a80;--over-bg:#3a1d1a;--soon:#e8bc62;--soon-bg:#352a12;--ok:#86c891;--ok-bg:#18301c;
+  --never:#b3b0a8;--never-bg:#2b2a27;--onord:#b7aaf5;--onord-bg:#26213f;--shadow:none;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+header{padding:20px 0 0}
+.title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h1{font-size:23px;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px}
+.syncchip{margin-left:auto;align-self:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.syncchip.ok{color:var(--ok)} .syncchip.err{color:var(--over);border-color:var(--over)}
+details.help{margin-top:12px;font-size:14px}
+details.help summary{cursor:pointer;font-weight:600}
+details.help ol{margin:8px 0 0;padding-left:20px;color:var(--muted)}
+details.help li{margin-bottom:4px}
+.banner{margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--soon-bg);color:var(--soon);font-size:14px;font-weight:500}
+.banner.bad{background:var(--over-bg);color:var(--over)}
+.banner[hidden]{display:none}
+.howto{max-width:760px}
+.howto .toc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.howto .toc button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+.howto section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow);scroll-margin-top:12px}
+.howto h2{font-size:17px;margin:0 0 8px}
+.howto h3{font-size:14.5px;margin:14px 0 6px}
+.howto p,.howto li{font-size:14.5px;line-height:1.55}
+.howto ol,.howto ul{padding-left:22px;margin:6px 0}
+.howto li{margin-bottom:5px}
+.howto .tip{background:var(--accent-soft);border-radius:9px;padding:9px 12px;font-size:14px;margin:10px 0 0}
+.howto .warn{background:var(--soon-bg);color:var(--text);border-radius:9px;padding:9px 12px;font-size:14px;margin:10px 0 0}
+.howto table{border-collapse:collapse;width:100%;font-size:14px}
+.howto td{padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}
+.howto td:first-child{white-space:nowrap}
+code{background:var(--surface-2);padding:1px 5px;border-radius:5px;font-size:13px}
+.summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer}
+.chip b{font-variant-numeric:tabular-nums}
+.chip.over b{color:var(--over)} .chip.soon b{color:var(--soon)} .chip.onord b{color:var(--onord)}
+nav.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-top:12px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:0;padding:10px 12px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-weight:500}
+nav.tabs button.on{color:var(--text);border-bottom-color:var(--accent)}
+nav.tabs .badge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--onord-bg);color:var(--onord);font-size:12px;font-weight:700;text-align:center}
+main{padding:16px 0 130px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar input[type=search]{flex:1 1 200px;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:8px 11px;cursor:pointer;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--accent-soft);color:var(--text);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:14px;white-space:nowrap;text-decoration:none;color:var(--text);display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.good{background:var(--ok-bg);border-color:transparent;color:var(--ok);font-weight:600}
+.btn.danger{color:var(--over)}
+.btn.sm{padding:5px 9px;font-size:13px}
+.btn.big{padding:12px 14px;font-size:15px;width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.linkbtn{background:none;border:0;padding:0;color:inherit;cursor:pointer;text-align:left;font:inherit}
+.linkbtn:hover .name{text-decoration:underline}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.row{display:grid;grid-template-columns:24px 44px 1fr auto auto auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row.sel{background:var(--accent-soft)}
+.row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;margin:0}
+.thumb{width:44px;height:44px;border-radius:8px;background:var(--surface-2);object-fit:contain;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);overflow:hidden;border:1px solid var(--line)}
+img.thumb{background:#fff}
+.name{font-weight:600}
+.meta{color:var(--muted);font-size:13px}
+.pill{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;display:inline-block}
+.s-over{color:var(--over);background:var(--over-bg)} .s-soon{color:var(--soon);background:var(--soon-bg)}
+.s-ok{color:var(--ok);background:var(--ok-bg)} .s-never{color:var(--never);background:var(--never-bg)}
+.s-onord{color:var(--onord);background:var(--onord-bg)}
+.qty{display:flex;align-items:center;gap:4px}
+.qty button{width:30px;height:30px;border:1px solid var(--line);background:var(--surface);border-radius:7px;cursor:pointer;line-height:1}
+.qty input{width:46px;text-align:center;padding:5px;border:1px solid var(--line);border-radius:7px;background:var(--surface)}
+.unit{color:var(--muted);font-size:13px;min-width:62px}
+.link{font-size:13px;white-space:nowrap;text-decoration:none}
+.link:hover{text-decoration:underline}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.cartbar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom)}
+.cartbar .wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.cartbar .count{flex:1 1 auto;font-weight:600}
+.cartbar .count span{color:var(--muted);font-weight:400}
+.group{margin-bottom:18px}
+.group h3{font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
+.crow{display:grid;grid-template-columns:44px 1fr 120px 140px 110px auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.crow:first-child{border-top:0}
+.small{font-size:13px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.card-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.card-h .d{font-weight:700;flex:1 1 auto}
+.card-h .d span{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.lines{list-style:none;margin:0;padding:4px 14px 8px}
+.lines li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.lines li:last-child{border-bottom:0}
+.lines .q{color:var(--muted);white-space:nowrap}
+.lines .r{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.panel h2{font-size:16px;margin:0 0 4px}
+.panel p{margin:4px 0 12px;color:var(--muted);font-size:14px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.field label{font-size:13px;font-weight:600}
+.field .hint{font-size:12.5px;color:var(--muted)}
+.field input,.field textarea,.field select{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);width:100%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* supply check */
+.checkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.ccard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.ccard.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.ccard .top{display:flex;gap:12px;padding:12px}
+.ccard .ph{width:92px;height:92px;flex:0 0 92px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted);font-size:12px;text-align:center;cursor:pointer;padding:0}
+.ccard .ph img{width:100%;height:100%;object-fit:contain;background:#fff}
+.facts{font-size:13.5px;margin-top:4px}
+.facts div{display:flex;gap:6px}
+.facts dt{color:var(--muted);min-width:78px}
+.ccard .act{padding:0 12px 12px}
+/* detail */
+.back{margin-bottom:12px}
+.dhead{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start}
+.photo{width:200px;height:200px;border-radius:14px;border:1px solid var(--line);background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted);font-size:13px;text-align:center;padding:10px}
+.photo img{width:100%;height:100%;object-fit:contain;background:#fff;border-radius:8px}
+.photoacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;max-width:200px}
+.dtitle{font-size:21px;font-weight:700;margin:0 0 4px;line-height:1.25}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0}
+.kv div{background:var(--surface-2);border-radius:10px;padding:9px 11px}
+.kv dt{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kv dd{margin:2px 0 0;font-weight:600;font-variant-numeric:tabular-nums}
+.dacts{display:flex;gap:8px;flex-wrap:wrap}
+.section h2{font-size:15px;margin:22px 0 8px}
+table.hist{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:14px}
+table.hist th,table.hist td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+table.hist th{background:var(--surface-2);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-top:0}
+dialog{border:1px solid var(--line);border-radius:14px;padding:0;background:var(--surface);color:var(--text);width:min(540px,calc(100vw - 24px));box-shadow:0 20px 50px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog .dh{padding:16px 18px 6px;font-weight:700;font-size:17px}
+dialog .db{padding:6px 18px 4px;max-height:68vh;overflow:auto}
+dialog .df{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px 16px;flex-wrap:wrap}
+dialog .df .spacer{flex:1}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:50;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+#printSheet{display:none}
+.cartbar[hidden]{display:none}
+@media (max-width:720px){
+  h1{font-size:20px}
+  .row{grid-template-columns:24px 44px 1fr;row-gap:8px}
+  .row .pill{grid-column:3;grid-row:2;justify-self:start}
+  .row .qty{grid-column:2 / 4;grid-row:3}
+  .row .link{grid-column:3;grid-row:3;justify-self:end}
+  .crow{grid-template-columns:44px 1fr auto;row-gap:2px}
+  .crow > :nth-child(3),.crow > :nth-child(4),.crow > :nth-child(5){grid-column:2;font-size:13px}
+  .crow > :nth-child(6){grid-column:3;grid-row:1}
+  .grid2{grid-template-columns:1fr}
+  .dhead{grid-template-columns:1fr}
+  .photo{width:100%;height:220px}
+  .photoacts{max-width:none}
+  .checkgrid{grid-template-columns:1fr}
+  .cartbar .wrap{gap:6px;padding-top:8px;padding-bottom:8px}
+  .cartbar .count{flex-basis:100%;font-size:14px}
+  .cartbar .btn{flex:1 1 auto;padding:7px 6px;font-size:13px}
+  .toast{bottom:120px}
+  table.hist{font-size:13px}
+  table.hist th,table.hist td{padding:8px}
+}
+@media print{
+  body{background:#fff;color:#000;font-size:12pt}
+  #app,.cartbar,.toast,dialog{display:none!important}
+  #printSheet{display:block}
+  #printSheet h1{font-size:18pt;margin:0}
+  #printSheet .ps-sub{margin:2px 0 14px;color:#444}
+  #printSheet table{width:100%;border-collapse:collapse}
+  #printSheet th,#printSheet td{border-bottom:1px solid #999;padding:7px 6px;text-align:left;vertical-align:top}
+  #printSheet td.box{width:24px;font-size:14pt}
+  #printSheet .url{font-size:9pt;color:#333;word-break:break-all}
+  #printSheet .sig{margin-top:28px;display:flex;gap:40px}
+  #printSheet .sig div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:10pt}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="wrap">
+    <div class="title"><h1>Supply Orders</h1><span class="sub" id="officeName"></span><button class="syncchip" id="syncChip" hidden></button></div>
+    <div class="banner" id="banner" hidden></div>
+    <div class="summary" id="summary"></div>
+    <nav class="tabs" id="tabs"></nav>
+  </header>
+  <main class="wrap" id="main"></main>
+</div>
+
+<div class="cartbar" id="cartbar">
+  <div class="wrap">
+    <div class="count" id="cartCount"></div>
+    <button class="btn" id="btnCopy">Copy for email</button>
+    <button class="btn" id="btnPrint">Print</button>
+    <button class="btn danger" id="btnClear">Clear</button>
+    <button class="btn primary" id="btnOrdered">Mark as ordered…</button>
+  </div>
+</div>
+
+<div id="printSheet"></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="photoFile" accept="image/*" capture="environment" hidden>
+
+<dialog id="itemDlg">
+  <form method="dialog" id="itemForm">
+    <div class="dh" id="itemDlgTitle">Edit item</div>
+    <div class="db">
+      <div class="field"><label for="f_name">Item name</label><input id="f_name" required></div>
+      <div class="grid2">
+        <div class="field"><label for="f_cat">Category / area</label><input id="f_cat" list="catList"><datalist id="catList"></datalist></div>
+        <div class="field"><label for="f_unit">Order unit</label><input id="f_unit" placeholder="box, case, roll…"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label for="f_qty">Usual quantity</label><input id="f_qty" type="number" min="1" step="1"></div>
+        <div class="field"><label for="f_pack">Pack size</label><input id="f_pack" placeholder="e.g. 16 packs × 250 sheets"></div>
+      </div>
+      <div class="field"><label for="f_int">Reorder every (days)</label><input id="f_int" type="number" min="1" step="1" placeholder="Auto from history"><span class="hint">Leave blank to estimate from past orders.</span></div>
+      <div class="field" id="f_urlWrap"><label for="f_url">Amazon link</label><input id="f_url" type="url" placeholder="Paste the product link"><span class="hint">Long links are cleaned up automatically. Switching brands? Use <b>Replace product</b> on the item's page so it's logged.</span></div>
+      <div class="field"><label for="f_notes">Notes</label><textarea id="f_notes" rows="2" placeholder="Where it's stored, who uses it…"></textarea></div>
+    </div>
+    <div class="df">
+      <button type="button" class="btn danger" id="btnDelItem">Delete item</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="replDlg">
+  <form method="dialog" id="replForm">
+    <div class="dh">Replace product</div>
+    <div class="db">
+      <p class="small" style="margin-top:0">Use this when the item is substituted or switched to a different brand. The old product is kept in the item's history.</p>
+      <div class="field"><label for="r_url">New Amazon link</label><input id="r_url" type="url" required placeholder="Paste the new product link"></div>
+      <div class="field"><label for="r_name">Item name</label><input id="r_name" required></div>
+      <div class="grid2">
+        <div class="field"><label for="r_unit">Order unit</label><input id="r_unit"></div>
+        <div class="field"><label for="r_pack">Pack size</label><input id="r_pack"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label for="r_date">Date of change</label><input id="r_date" type="date" required></div>
+        <div class="field"><label for="r_photo">New photo address (optional)</label><input id="r_photo" type="url" placeholder="Image address"></div>
+      </div>
+      <div class="field"><label for="r_note">Reason</label><input id="r_note" placeholder="Out of stock, better price, vendor change…"></div>
+    </div>
+    <div class="df">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save replacement</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="orderDlg">
+  <form method="dialog" id="orderForm">
+    <div class="dh">Mark as ordered</div>
+    <div class="db">
+      <div class="field"><label for="o_date">Order date</label><input id="o_date" type="date" required></div>
+      <ul class="lines" id="o_lines" style="padding:0"></ul>
+      <p class="note">Saves this to History and shows these items under <b>On order</b> until you mark them received. The current list is then cleared.</p>
+    </div>
+    <div class="df">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save order</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="imgDlg">
+  <form method="dialog" id="imgForm">
+    <div class="dh">Photo from Amazon</div>
+    <div class="db">
+      <p class="small" style="margin-top:0">On the Amazon product page, right-click the main photo (or long-press on a phone) and choose <b>Copy image address</b>. Paste it here.</p>
+      <div class="field"><label for="i_url">Image address</label><input id="i_url" type="url" required placeholder="https://m.media-amazon.com/images/I/…"></div>
+    </div>
+    <div class="df">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Use this photo</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+"use strict";
+const KEY = "supplyTracker.v1";
+const amz = a => "https://www.amazon.com/dp/" + a;
+
+/* ---------- starter data (from order history, May–Sep 2026) ---------- */
+const RAW_ITEMS = [
+  ["multifold","Multifold Paper Towels, 3-ply","Janitorial","case",2,"B001AZKS4W"],
+  ["rolltowels","Regular Paper Towels (rolls)","Janitorial","package",1,"B09BWFX1L6"],
+  ["tissue","Facial Tissue, 2-ply, 30 boxes","Janitorial","carton",1,"B018HUP15S"],
+  ["toilet","Toilet Paper, AmazonCommercial","Janitorial","case",1,"B07KWNSTRR"],
+  ["windex","Windex Multi-Surface Cleaner","Janitorial","bottle",1,"B075NPBFP6"],
+  ["trash","Trash Bags, Tall Kitchen Drawstring","Janitorial","box",1,"B093X8QQ12"],
+  ["paper","Printer Paper, 8.5×11 White","Office","box",1,"B01FV0F13E"],
+  ["highlighters","Sharpie Highlighters, Green","Office","box",1,"B00006IEJA"],
+  ["envelopes","Manila Envelopes, 9×12 Self-Seal (100)","Office","box",1,"B0BCHR3BNB"],
+  ["thermal","Thermal Paper Rolls 2¼×50 (card terminal)","Front desk","box",1,"B0DSKXB31W"],
+  ["feeslip","Fee Slip Paper","Front desk","ream",10,"B009Z0QYHO"],
+  ["tonerset","OCT Printer Toner, Full Set (C1810W)","Printers & labels","set",1,"B0CZ45Z999"],
+  ["tonercyan","OCT Printer Toner, Cyan (C1810W)","Printers & labels","cartridge",1,"B09BVKSHHL"],
+  ["epson60","Epson 60 Ink (med rec label printer)","Printers & labels","box",1,"B002QWGI1K"],
+  ["dymo","Dymo Labels 1×1 #30332 (optical)","Printers & labels","roll",1,"B00004Z60O"]
+];
+// products used in May before switching listings
+const OLD = {
+  multifold:{ name:"Multifold Paper Towels (Pacific Blue 21000)", url:amz("B004YK2KSM"), switched:"2026-06-10" },
+  tissue:{ name:"Facial Tissue (earlier GEN listing)", url:amz("B01AZGXGVI"), switched:"2026-09-11" },
+  paper:{ name:"Printer Paper (earlier listing)", url:amz("B07K8WHH5J"), switched:"2026-09-11" }
+};
+const RAW_ORDERS = [
+  ["2026-09-11",[["multifold",2],["rolltowels",1],["thermal",1],["tonercyan",1],["trash",1],["highlighters",1],["envelopes",1],["tissue",1],["paper",1]]],
+  ["2026-06-10",[["feeslip",10],["multifold",2],["rolltowels",1],["epson60",1],["tonerset",1],["thermal",1],["dymo",1]]],
+  ["2026-05-18",[["tissue",null],["multifold",null],["toilet",null],["windex",null],["paper",null]]]
+];
+function buildSeed(){
+  const items = RAW_ITEMS.map(([id,name,category,unit,qty,asin]) => ({
+    id, name, category, unit, qty, packSize:"", url:amz(asin), photo:"", notes:"", interval:null,
+    changes: OLD[id] ? [{ date:OLD[id].switched, fromName:OLD[id].name, fromUrl:OLD[id].url, toName:name, toUrl:amz(asin), note:"Switched listings (from order history)" }] : []
+  }));
+  const byId = Object.fromEntries(items.map(i => [i.id,i]));
+  const orders = RAW_ORDERS.map(([date,lines]) => ({
+    id:"o" + date.replace(/-/g,""), date,
+    lines: lines.map(([id,qty]) => {
+      const it = byId[id], old = OLD[id] && date < OLD[id].switched ? OLD[id] : null;
+      return { itemId:id, name: old ? old.name : it.name, unit:it.unit, url: old ? old.url : it.url, qty, received:true, receivedDate:null };
+    })
+  }));
+  return { version:2, settings:{ officeName:"Great Barrington Office", defaultInterval:90, dueSoonDays:21, lastExport:null }, items, orders, cart:{}, cartT:{}, settingsU:0, deleted:{} };
+}
+const SEED = buildSeed();
+
+let state = load();
+let snap = snapshotOf(state), editVer = 0;
+let tab = "order", filter = "all", query = "", checkQuery = "", detailId = null, editingId = null, photoTarget = null;
+
+/* sync settings live only in this browser (never in the repo or in backups) */
+const SKEY = "supplyTracker.sync";
+let syncCfg = null; try { syncCfg = JSON.parse(localStorage.getItem(SKEY) || "null"); } catch(e){}
+let syncState = { s: syncCfg ? "pending" : "off", msg:"" }, pushTimer = null, chain = Promise.resolve();
+
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function load(){
+  try { const s = localStorage.getItem(KEY); if (s) { const d = JSON.parse(s); if (d && Array.isArray(d.items) && Array.isArray(d.orders)) return normalize(d); } } catch(e){}
+  return clone(SEED);
+}
+function normalize(d){
+  d.settings = Object.assign({}, SEED.settings, d.settings || {});
+  d.cart = d.cart || {}; d.cartT = d.cartT || {}; d.deleted = d.deleted || {}; d.settingsU = d.settingsU || 0;
+  d.items.forEach(i => { i.changes = i.changes || []; i.photo = i.photo || ""; i.packSize = i.packSize || ""; delete i.altUrl; });
+  d.orders.forEach(o => o.lines.forEach(l => { if (l.received === undefined) { l.received = true; l.receivedDate = null; } if (!l.url) { const it = d.items.find(i => i.id === l.itemId); l.url = it ? it.url : ""; } }));
+  d.version = 2;
+  return d;
+}
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){ toast("Couldn't save — browser storage may be full. Export a backup."); } }
+function save(){
+  stamp(); persist(); editVer++;
+  if (syncCfg) { syncCfg.dirty = true; saveSync(); setStatus("pending"); schedulePush(); }
+}
+
+/* ---------- change tracking: every record carries the time it last changed ---------- */
+function recKey(r){ const o = Object.assign({}, r); delete o.u; return JSON.stringify(o); }
+function settingsKey(s){ const o = Object.assign({}, s); delete o.lastExport; return JSON.stringify(o); }
+function snapshotOf(s){
+  return { items:new Map(s.items.map(r => [r.id, recKey(r)])), orders:new Map(s.orders.map(r => [r.id, recKey(r)])),
+           cart:Object.assign({}, s.cart), settings:settingsKey(s.settings) };
+}
+function stamp(){
+  const now = Date.now();
+  ["items","orders"].forEach(k => {
+    const prev = snap[k], seen = new Set();
+    state[k].forEach(r => { seen.add(r.id); if (prev.get(r.id) !== recKey(r)) r.u = now; });
+    prev.forEach((_, id) => { if (!seen.has(id)) state.deleted[id] = now; });
+  });
+  new Set([...Object.keys(snap.cart), ...Object.keys(state.cart)]).forEach(k => { if (snap.cart[k] !== state.cart[k]) state.cartT[k] = now; });
+  if (settingsKey(state.settings) !== snap.settings) state.settingsU = now;
+  snap = snapshotOf(state);
+}
+function forceStamp(){
+  const now = Date.now();
+  state.items.forEach(r => r.u = now); state.orders.forEach(r => r.u = now);
+  Object.keys(state.cart).forEach(k => state.cartT[k] = now); state.settingsU = now;
+}
+/* combine two copies: newest version of each record wins, deletions stick */
+function mergeState(L, R){
+  const deleted = Object.assign({}, R.deleted);
+  Object.keys(L.deleted).forEach(k => deleted[k] = Math.max(deleted[k] || 0, L.deleted[k]));
+  const list = (a, b) => {
+    const m = new Map(a.map(r => [r.id, r]));
+    b.forEach(r => { const x = m.get(r.id); if (!x || (r.u || 0) >= (x.u || 0)) m.set(r.id, r); });
+    return [...m.values()].filter(r => !(deleted[r.id] && deleted[r.id] >= (r.u || 0)));
+  };
+  const cart = {}, cartT = {};
+  new Set([...Object.keys(L.cartT), ...Object.keys(R.cartT), ...Object.keys(L.cart), ...Object.keys(R.cart)]).forEach(k => {
+    const lt = L.cartT[k] || 0, rt = R.cartT[k] || 0, src = rt >= lt ? R : L;
+    if (src.cart[k] != null) cart[k] = src.cart[k];
+    if (lt || rt) cartT[k] = Math.max(lt, rt);
+  });
+  const sR = (R.settingsU || 0) >= (L.settingsU || 0);
+  return normalize({ version:2, settings: Object.assign({}, sR ? R.settings : L.settings, { lastExport: L.settings.lastExport }),
+    settingsU: Math.max(L.settingsU || 0, R.settingsU || 0), items: list(L.items, R.items), orders: list(L.orders, R.orders), cart, cartT, deleted });
+}
+function canon(s){
+  const by = a => a.slice().sort((x,y) => x.id < y.id ? -1 : 1).map(r => [r.id, r.u || 0, recKey(r)]);
+  const obj = o => Object.keys(o).sort().map(k => [k, o[k]]);
+  return JSON.stringify([by(s.items), by(s.orders), obj(s.cart), obj(s.cartT), settingsKey(s.settings), s.settingsU || 0, obj(s.deleted)]);
+}
+
+/* ---------- GitHub sync (data.json on a separate branch) ---------- */
+function saveSync(){ try { if (syncCfg) localStorage.setItem(SKEY, JSON.stringify(syncCfg)); else localStorage.removeItem(SKEY); } catch(e){} }
+function timeStr(t){ return new Date(t).toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" }); }
+function syncText(){
+  const s = syncState.s;
+  if (s === "off") return "Not connected — data is saved on this device only";
+  if (s === "busy") return "Syncing…";
+  if (s === "pending") return "Saving…";
+  if (s === "offline") return "Offline — changes are kept on this device and will sync when you're back online";
+  if (s === "error") return "Sync problem: " + syncState.msg;
+  return "Synced" + (syncCfg && syncCfg.lastSync ? " at " + timeStr(syncCfg.lastSync) : "");
+}
+function setStatus(s, msg){
+  syncState = { s, msg: msg || "" };
+  const c = $("syncChip"); c.hidden = !syncCfg;
+  if (syncCfg) {
+    c.className = "syncchip" + (s === "ok" ? " ok" : s === "error" ? " err" : "");
+    c.textContent = s === "ok" ? "✓ Synced " + timeStr(syncCfg.lastSync || Date.now()) : s === "error" ? "⚠ Sync problem" : s === "offline" ? "○ Offline" : "↻ " + syncText();
+    c.title = syncText();
+  }
+  const el = $("syncStatus"); if (el) el.textContent = syncText();
+  renderBanner();
+}
+function schedulePush(){ clearTimeout(pushTimer); pushTimer = setTimeout(runSync, 3000); }
+function runSync(){ chain = chain.then(() => doSync(0)); return chain; }
+
+function b64enc(str){ const b = new TextEncoder().encode(str); let s = ""; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+function b64dec(b64){ const s = atob(b64.replace(/\s/g, "")); return new TextDecoder().decode(Uint8Array.from(s, c => c.charCodeAt(0))); }
+function ghPath(sub){ return "/repos/" + encodeURIComponent(syncCfg.owner) + "/" + encodeURIComponent(syncCfg.repo) + sub; }
+function filePath(){ return ghPath("/contents/" + syncCfg.path.split("/").map(encodeURIComponent).join("/")); }
+async function gh(path, opts){
+  opts = opts || {};
+  const headers = Object.assign({ Authorization:"Bearer " + syncCfg.token, Accept:"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" }, opts.headers || {});
+  const r = await fetch("https://api.github.com" + path, { method: opts.method || "GET", headers, body: opts.body ? JSON.stringify(opts.body) : undefined, cache:"no-store" });
+  if (!r.ok) {
+    const e = new Error(r.status === 401 ? "GitHub rejected the access token. It has probably expired — see How to → Renew the access token."
+      : r.status === 403 ? "The token can't write to this repo. Check it has Contents: Read and write."
+      : r.status === 404 ? "Repo not found. Check the owner and repo name, and that the token includes this repo."
+      : "GitHub returned error " + r.status + ".");
+    e.status = r.status; throw e;
+  }
+  return r;
+}
+async function getRemote(){
+  const ref = "?ref=" + encodeURIComponent(syncCfg.branch);
+  let j;
+  try { j = await (await gh(filePath() + ref)).json(); } catch(e){ if (e.status === 404) return null; throw e; }
+  const text = j.content && j.encoding === "base64" ? b64dec(j.content)
+    : await (await gh(filePath() + ref, { headers:{ Accept:"application/vnd.github.raw+json" } })).text();
+  return { sha: j.sha, data: JSON.parse(text) };
+}
+async function ensureBranch(){
+  try { await gh(ghPath("/branches/" + encodeURIComponent(syncCfg.branch))); return; } catch(e){ if (e.status !== 404) throw e; }
+  const repo = await (await gh(ghPath(""))).json();
+  const ref = await (await gh(ghPath("/git/ref/heads/" + encodeURIComponent(repo.default_branch)))).json();
+  await gh(ghPath("/git/refs"), { method:"POST", body:{ ref:"refs/heads/" + syncCfg.branch, sha: ref.object.sha } });
+}
+async function putRemote(sha){
+  const body = { message:"Supply data update", content: b64enc(JSON.stringify(state, null, 1)), branch: syncCfg.branch };
+  if (sha) body.sha = sha;
+  return (await (await gh(filePath(), { method:"PUT", body })).json()).content.sha;
+}
+async function doSync(attempt){
+  if (!syncCfg || !syncCfg.token) return;
+  clearTimeout(pushTimer);
+  setStatus("busy");
+  try {
+    const remote = await getRemote();
+    if (!remote) { await ensureBranch(); syncCfg.sha = null; syncCfg.dirty = true; }
+    else if (remote.sha !== syncCfg.sha) {
+      const rd = normalize(remote.data), before = canon(state);
+      state = mergeState(state, rd); snap = snapshotOf(state); persist();
+      syncCfg.sha = remote.sha;
+      syncCfg.dirty = canon(state) !== canon(rd);
+      if (canon(state) !== before) render();
+    }
+    if (syncCfg.dirty) {
+      const ver = editVer;
+      syncCfg.sha = await putRemote(syncCfg.sha);
+      syncCfg.dirty = ver !== editVer;
+    }
+    syncCfg.lastSync = Date.now(); saveSync();
+    setStatus(syncCfg.dirty ? "pending" : "ok");
+    if (syncCfg.dirty) schedulePush();
+  } catch(e) {
+    if ((e.status === 409 || e.status === 422) && attempt < 3) { syncCfg.sha = "stale"; return doSync(attempt + 1); }
+    saveSync();
+    if (!e.status) setStatus("offline"); else setStatus("error", e.message);
+  }
+}
+function guessRepo(){
+  const h = location.hostname, out = { owner:"", repo:"", branch:"supply-data", path:"data.json", token:"" };
+  if (/\.github\.io$/i.test(h)) {
+    out.owner = h.split(".")[0];
+    const seg = location.pathname.split("/").filter(Boolean)[0];
+    out.repo = seg && !/\.html?$/i.test(seg) ? seg : h;
+  }
+  return out;
+}
+
+/* ---------- dates ---------- */
+function parseD(s){ const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
+function today(){ const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+function iso(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function addDays(d,n){ const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function diff(a,b){ return Math.round((b - a) / 864e5); }
+function fmt(d){ return d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
+function fmtShort(d){ return d.toLocaleDateString("en-US", d.getFullYear() === today().getFullYear() ? {month:"short",day:"numeric"} : {month:"short",day:"numeric",year:"numeric"}); }
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function item(id){ return state.items.find(i => i.id === id); }
+function asinOf(url){
+  if (!url) return "";
+  let u = url; try { u = decodeURIComponent(decodeURIComponent(url)); } catch(e){}
+  const m = u.match(/(?:\/dp\/|\/gp\/product\/|\/gp\/aw\/d\/|[?&]asin=|\/ASIN\/)([A-Z0-9]{10})(?![A-Z0-9])/i);
+  return m ? m[1].toUpperCase() : "";
+}
+function cleanUrl(url){ const a = asinOf(url); return a && /amazon\./i.test(url) ? amz(a) : (url || "").trim(); }
+function shortUrl(u){ return (u || "").replace(/^https?:\/\/(www\.)?/, ""); }
+function thumb(it, cls){ return it.photo ? `<img class="${cls||"thumb"}" src="${esc(it.photo)}" alt="" loading="lazy">` : `<div class="${cls||"thumb"}">No photo</div>`; }
+
+function linesFor(id){
+  const out = [];
+  state.orders.forEach(o => o.lines.forEach(l => { if (l.itemId === id) out.push({ order:o, line:l }); }));
+  return out.sort((a,b) => b.order.date.localeCompare(a.order.date));
+}
+function stats(it){
+  const ls = linesFor(it.id);
+  const ds = [...new Set(ls.map(x => x.order.date))].sort();
+  const last = ds.length ? parseD(ds[ds.length-1]) : null;
+  const lastQty = (ls.find(x => x.line.qty != null) || {}).line;
+  const open = ls.find(x => !x.line.received);
+  let interval, src;
+  if (it.interval) { interval = +it.interval; src = "set"; }
+  else if (ds.length >= 2) {
+    let g = 0; for (let i = 1; i < ds.length; i++) g += diff(parseD(ds[i-1]), parseD(ds[i]));
+    interval = Math.max(1, Math.round(g / (ds.length - 1))); src = "avg";
+  } else { interval = +state.settings.defaultInterval || 90; src = "default"; }
+  const base = { count:ds.length, last, lastQty: lastQty ? lastQty.qty : null, interval, src, open: open || null };
+  if (!last) return Object.assign(base, { due:null, days:null, status:"never" });
+  const due = addDays(last, interval), days = diff(today(), due);
+  const soon = +state.settings.dueSoonDays || 21;
+  let status = days < 0 ? "over" : days <= soon ? "soon" : "ok";
+  if (open) status = "onord";
+  return Object.assign(base, { due, days, status });
+}
+function statusLabel(s){
+  if (s.status === "onord") return "On order since " + fmtShort(parseD(s.open.order.date));
+  if (s.status === "never") return "Not ordered yet";
+  if (s.status === "over") return "Overdue " + (-s.days) + "d";
+  if (s.status === "soon") return s.days === 0 ? "Due today" : "Due in " + s.days + "d";
+  return "Due " + fmtShort(s.due);
+}
+function intervalLabel(s){ return "every ~" + s.interval + " days" + (s.src === "avg" ? " (avg)" : s.src === "default" ? " (default)" : " (set)"); }
+const RANK = { over:0, soon:1, onord:2, ok:3, never:4 };
+function isDue(s){ return s.status === "over" || s.status === "soon"; }
+function openLines(){ const out = []; state.orders.forEach(o => o.lines.forEach(l => { if (!l.received) out.push({order:o,line:l}); })); return out; }
+function lastQtyFor(it){ const s = stats(it); return s.lastQty || it.qty || 1; }
+
+/* ---------- render ---------- */
+const TABS = [["order","Next order"],["onorder","On order"],["check","Supply check"],["catalog","Catalog"],["history","History"],["settings","Settings"],["help","How to"]];
+
+function tokenDaysLeft(){
+  if (!syncCfg || !syncCfg.expires) return null;
+  return diff(today(), parseD(syncCfg.expires));
+}
+function renderBanner(){
+  const b = $("banner"); if (!b) return;
+  const d = tokenDaysLeft();
+  if (d == null || d > 14) { b.hidden = true; return; }
+  b.hidden = false;
+  b.className = "banner" + (d < 0 ? " bad" : "");
+  b.innerHTML = (d < 0 ? `Your GitHub access token expired ${fmt(parseD(syncCfg.expires))}, so this device can't sync.`
+    : d === 0 ? "Your GitHub access token expires today."
+    : `Your GitHub access token expires in ${d} day${d === 1 ? "" : "s"} (${fmt(parseD(syncCfg.expires))}).`) +
+    ` <button class="linkbtn" data-help="h-renew"><u>How to renew it</u></button>`;
+}
+
+function render(){
+  $("officeName").textContent = state.settings.officeName || "";
+  renderBanner();
+  const nOpen = openLines().length;
+  $("tabs").innerHTML = TABS.map(([k,l]) => `<button data-tab="${k}" class="${tab===k && !detailId ? "on" : ""}">${l}${k==="onorder" && nOpen ? `<span class="badge">${nOpen}</span>` : ""}</button>`).join("");
+  renderSummary(nOpen);
+  if (detailId && item(detailId)) renderDetail(item(detailId));
+  else { detailId = null; ({order:renderOrder, onorder:renderOnOrder, check:renderCheck, catalog:renderCatalog, history:renderHistory, settings:renderSettings, help:renderHelp})[tab](); }
+  renderCart();
+}
+
+function renderSummary(nOpen){
+  let over = 0, soon = 0;
+  state.items.forEach(it => { const s = stats(it); if (s.status === "over") over++; else if (s.status === "soon") soon++; });
+  const lastOrder = state.orders.slice().sort((a,b) => b.date.localeCompare(a.date))[0];
+  $("summary").innerHTML =
+    `<button class="chip over" data-jump="due"><b>${over}</b> overdue</button>` +
+    `<button class="chip soon" data-jump="due"><b>${soon}</b> due soon</button>` +
+    `<button class="chip onord" data-jump="onorder"><b>${nOpen}</b> on order, not received</button>` +
+    (lastOrder ? `<span class="chip" style="cursor:default">Last order <b>${fmtShort(parseD(lastOrder.date))}</b> · ${diff(parseD(lastOrder.date), today())}d ago</span>` : "");
+}
+
+function renderOrder(){
+  const q = query.toLowerCase();
+  let rows = state.items.map(it => ({ it, s: stats(it) }));
+  if (filter === "due") rows = rows.filter(r => isDue(r.s));
+  if (filter === "cart") rows = rows.filter(r => state.cart[r.it.id] != null);
+  if (q) rows = rows.filter(r => (r.it.name + " " + r.it.category + " " + asinOf(r.it.url)).toLowerCase().includes(q));
+  rows.sort((a,b) => RANK[a.s.status] - RANK[b.s.status] || (a.s.days ?? 1e9) - (b.s.days ?? 1e9) || a.it.name.localeCompare(b.it.name));
+  const dueCount = state.items.filter(it => isDue(stats(it)) && state.cart[it.id] == null).length;
+
+  $("main").innerHTML = `
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search name, category or item #…" value="${esc(query)}">
+      <div class="seg">
+        <button data-f="all" class="${filter==="all"?"on":""}">All</button>
+        <button data-f="due" class="${filter==="due"?"on":""}">Due</button>
+        <button data-f="cart" class="${filter==="cart"?"on":""}">In this order</button>
+      </div>
+      <button class="btn" id="btnAddDue" ${dueCount ? "" : "disabled"}>Add all due (${dueCount})</button>
+    </div>
+    <div class="list">
+      ${rows.length ? rows.map(({it,s}) => {
+        const inCart = state.cart[it.id] != null;
+        const qv = inCart ? state.cart[it.id] : it.qty;
+        const meta = [esc(it.category), s.last ? "last " + fmtShort(s.last) + (s.lastQty ? " (" + s.lastQty + ")" : "") : "never ordered", s.count >= 1 ? intervalLabel(s) : ""].filter(Boolean).join(" · ");
+        return `<div class="row ${inCart ? "sel" : ""}" data-id="${esc(it.id)}">
+          <input type="checkbox" data-act="toggle" aria-label="Add ${esc(it.name)}" ${inCart ? "checked" : ""}>
+          <button class="linkbtn" data-open="${esc(it.id)}" aria-label="Open ${esc(it.name)}">${thumb(it)}</button>
+          <button class="linkbtn" data-open="${esc(it.id)}"><div class="name">${esc(it.name)}</div><div class="meta">${meta}</div></button>
+          <span class="pill s-${s.status}">${statusLabel(s)}</span>
+          <div class="qty"><button data-act="dec" aria-label="Less">−</button><input data-act="qty" type="number" min="1" value="${qv}" aria-label="Quantity"><span class="unit">${esc(it.unit)}</span><button data-act="inc" aria-label="More">+</button></div>
+          ${it.url ? `<a class="link" href="${esc(it.url)}" target="_blank" rel="noopener">Amazon ↗</a>` : `<span class="link meta">no link</span>`}
+        </div>`;
+      }).join("") : `<div class="empty">${filter === "cart" ? "Nothing in this order yet. Check items to add them." : "No items match."}</div>`}
+    </div>`;
+  bindSearch("search", v => { query = v; }, renderOrder);
+}
+
+function bindSearch(id, set, rerender){
+  const s = $(id); if (!s) return;
+  s.oninput = () => { set(s.value); rerender(); const n = $(id); n.focus(); n.setSelectionRange(n.value.length, n.value.length); };
+}
+
+function renderOnOrder(){
+  const groups = state.orders.filter(o => o.lines.some(l => !l.received)).sort((a,b) => a.date.localeCompare(b.date));
+  $("main").innerHTML = groups.length ? `
+    <p class="small" style="margin-top:0">Items ordered but not yet received. Check them off as boxes arrive.</p>
+    ${groups.map(o => {
+      const open = o.lines.filter(l => !l.received);
+      return `<div class="card">
+        <div class="card-h"><div class="d">Ordered ${fmt(parseD(o.date))}<span>${diff(parseD(o.date), today())} days ago · ${open.length} of ${o.lines.length} still waiting</span></div>
+          <button class="btn good" data-recvall="${esc(o.id)}">Mark all received</button></div>
+        <ul class="lines">${open.map(l => { const it = item(l.itemId); return `<li>
+          <span style="display:flex;gap:10px;align-items:center">${it ? thumb(it) : ""}<span><span class="name">${esc(it ? it.name : l.name)}</span><br><span class="q">${l.qty} × ${esc(l.unit)}</span></span></span>
+          <span class="r"><button class="btn good sm" data-recv="${esc(o.id)}|${esc(l.itemId)}">Received</button></span></li>`; }).join("")}</ul>
+      </div>`;
+    }).join("")}` : `<div class="empty">Everything ordered has been received.</div>`;
+}
+
+function renderCheck(){
+  const q = checkQuery.toLowerCase();
+  const its = state.items.filter(it => !q || (it.name + " " + it.category + " " + asinOf(it.url)).toLowerCase().includes(q));
+  const cats = [...new Set(its.map(i => i.category || "Other"))].sort();
+  $("main").innerHTML = `
+    <div class="toolbar"><input type="search" id="checkSearch" placeholder="Find a supply…" value="${esc(checkQuery)}"></div>
+    ${cats.map(c => `<div class="group"><h3>${esc(c)}</h3><div class="checkgrid">
+      ${its.filter(i => (i.category || "Other") === c).sort((a,b) => a.name.localeCompare(b.name)).map(it => {
+        const s = stats(it), inCart = state.cart[it.id] != null, lq = lastQtyFor(it), asin = asinOf(it.url);
+        return `<div class="ccard ${inCart ? "sel" : ""}">
+          <div class="top">
+            <button class="ph" data-photo="${esc(it.id)}" aria-label="Add or change photo">${it.photo ? `<img src="${esc(it.photo)}" alt="">` : "Tap to add photo"}</button>
+            <div style="min-width:0;flex:1">
+              <button class="linkbtn" data-open="${esc(it.id)}"><div class="name">${esc(it.name)}</div></button>
+              <dl class="facts" style="margin:4px 0 6px">
+                <div><dt>Item #</dt><dd style="margin:0">${asin ? esc(asin) : "—"}</dd></div>
+                <div><dt>Last qty</dt><dd style="margin:0">${s.lastQty ? s.lastQty + " × " + esc(it.unit) : "—"}</dd></div>
+                <div><dt>Last ordered</dt><dd style="margin:0">${s.last ? fmt(s.last) : "never"}</dd></div>
+              </dl>
+              <span class="pill s-${s.status}">${statusLabel(s)}</span>
+            </div>
+          </div>
+          <div class="act">${inCart
+            ? `<button class="btn big good" data-unadd="${esc(it.id)}">✓ In next order (${state.cart[it.id]} ${esc(it.unit)}) · Undo</button>`
+            : `<button class="btn big ${s.status === "onord" ? "" : "primary"}" data-addlast="${esc(it.id)}">Add ${lq} ${esc(it.unit)} to next order</button>`}</div>
+        </div>`;
+      }).join("")}
+    </div></div>`).join("") || `<div class="empty">No supplies match.</div>`}`;
+  bindSearch("checkSearch", v => { checkQuery = v; }, renderCheck);
+}
+
+function renderCatalog(){
+  const cats = [...new Set(state.items.map(i => i.category || "Other"))].sort();
+  $("main").innerHTML = `
+    <div class="toolbar"><span class="small" style="flex:1">${state.items.length} supplies. Tap one to see its history, photo and product changes.</span><button class="btn primary" id="btnNewItem">+ Add supply</button></div>
+    ${cats.map(c => `<div class="group"><h3>${esc(c)}</h3><div class="list">
+      ${state.items.filter(i => (i.category || "Other") === c).sort((a,b) => a.name.localeCompare(b.name)).map(it => {
+        const s = stats(it), asin = asinOf(it.url);
+        return `<div class="crow">
+          <button class="linkbtn" data-open="${esc(it.id)}">${thumb(it)}</button>
+          <button class="linkbtn" data-open="${esc(it.id)}"><div class="name">${esc(it.name)}</div><div class="small">${asin ? "#" + esc(asin) : "no item #"}${it.changes.length ? " · " + it.changes.length + " product change" + (it.changes.length>1?"s":"") : ""}</div></button>
+          <div class="small">${it.qty} × ${esc(it.unit)}</div>
+          <div class="small">${s.count >= 1 ? intervalLabel(s).replace(/^every/,"Every") : "No orders yet"}</div>
+          <div class="small">${s.last ? "Last " + fmtShort(s.last) : "Never ordered"}</div>
+          <div>${it.url ? `<a class="link" href="${esc(it.url)}" target="_blank" rel="noopener">Amazon ↗</a>` : ""}</div>
+        </div>`;
+      }).join("")}
+    </div></div>`).join("")}`;
+}
+
+function renderHistory(){
+  const orders = state.orders.slice().sort((a,b) => b.date.localeCompare(a.date));
+  $("main").innerHTML = orders.length ? orders.map((o,i) => {
+    const prev = orders[i+1];
+    const gap = prev ? diff(parseD(prev.date), parseD(o.date)) + " days after previous" : "first on record";
+    const waiting = o.lines.filter(l => !l.received).length;
+    return `<div class="card">
+      <div class="card-h">
+        <div class="d">${fmt(parseD(o.date))}<span>${o.lines.length} items · ${gap}${waiting ? " · " + waiting + " not received" : ""}</span></div>
+        <button class="btn sm" data-reorder="${esc(o.id)}">Reorder these</button>
+        <button class="btn sm danger" data-delorder="${esc(o.id)}">Delete</button>
+      </div>
+      <ul class="lines">${o.lines.map(l => {
+        const it = item(l.itemId);
+        const swapped = it && l.url && it.url && asinOf(l.url) !== asinOf(it.url);
+        return `<li><span>${it ? `<button class="linkbtn" data-open="${esc(it.id)}"><span class="name" style="font-weight:500">${esc(l.name)}</span></button>` : esc(l.name) + " <span class='small'>(removed)</span>"}${swapped ? ` <span class="small">· earlier product</span>` : ""}</span>
+          <span class="r"><span class="q">${l.qty == null ? "qty not recorded" : l.qty + " × " + esc(l.unit)}</span>${l.received ? "" : `<button class="btn good sm" data-recv="${esc(o.id)}|${esc(l.itemId)}">Received</button>`}</span></li>`;
+      }).join("")}</ul>
+    </div>`;
+  }).join("") : `<div class="empty">No orders yet.</div>`;
+}
+
+function renderDetail(it){
+  const s = stats(it), asin = asinOf(it.url), ls = linesFor(it.id), inCart = state.cart[it.id] != null;
+  const totalQty = ls.reduce((n,x) => n + (x.line.qty || 0), 0);
+  $("main").innerHTML = `
+    <button class="btn back" data-back>← Back</button>
+    <div class="dhead">
+      <div>
+        <div class="photo">${it.photo ? `<img src="${esc(it.photo)}" alt="${esc(it.name)}">` : "No photo yet"}</div>
+        <div class="photoacts">
+          <button class="btn sm" data-photo="${esc(it.id)}">📷 Take / choose photo</button>
+          <button class="btn sm" data-imgurl="${esc(it.id)}">Paste image address</button>
+          ${it.photo ? `<button class="btn sm danger" data-rmphoto="${esc(it.id)}">Remove</button>` : ""}
+        </div>
+      </div>
+      <div>
+        <div class="small">${esc(it.category)}</div>
+        <h2 class="dtitle">${esc(it.name)}</h2>
+        <span class="pill s-${s.status}">${statusLabel(s)}</span>
+        <dl class="kv">
+          <div><dt>Item # (ASIN)</dt><dd>${asin || "—"}</dd></div>
+          <div><dt>Order unit</dt><dd>${it.qty} × ${esc(it.unit)}</dd></div>
+          <div><dt>Pack size</dt><dd>${esc(it.packSize) || "—"}</dd></div>
+          <div><dt>Times ordered</dt><dd>${s.count}</dd></div>
+          <div><dt>Last ordered</dt><dd>${s.last ? fmt(s.last) : "—"}${s.lastQty ? " (" + s.lastQty + ")" : ""}</dd></div>
+          <div><dt>Reorder</dt><dd>${s.count ? intervalLabel(s).replace(/^every/,"Every") : "—"}</dd></div>
+          <div><dt>Next needed</dt><dd>${s.due ? fmt(s.due) : "—"}</dd></div>
+          <div><dt>Total ordered</dt><dd>${totalQty ? totalQty + " " + esc(it.unit) : "—"}</dd></div>
+        </dl>
+        ${it.notes ? `<p class="small">${esc(it.notes)}</p>` : ""}
+        <div class="dacts">
+          ${inCart ? `<button class="btn good" data-unadd="${esc(it.id)}">✓ In next order · Undo</button>` : `<button class="btn primary" data-addlast="${esc(it.id)}">Add ${lastQtyFor(it)} ${esc(it.unit)} to next order</button>`}
+          ${it.url ? `<a class="btn" href="${esc(it.url)}" target="_blank" rel="noopener">Open on Amazon ↗</a>` : ""}
+          <button class="btn" data-replace="${esc(it.id)}">Replace product</button>
+          <button class="btn" data-edit="${esc(it.id)}">Edit</button>
+        </div>
+      </div>
+    </div>
+    <div class="section"><h2>Order history</h2>
+      ${ls.length ? `<table class="hist"><thead><tr><th>Ordered</th><th>Qty</th><th>Product</th><th>Status</th></tr></thead><tbody>
+        ${ls.map(({order,line}) => `<tr><td>${fmt(parseD(order.date))}</td><td>${line.qty == null ? "—" : line.qty + " " + esc(line.unit)}</td>
+          <td>${line.url ? `<a href="${esc(line.url)}" target="_blank" rel="noopener">${esc(asinOf(line.url) || "link")}</a>` : "—"}${asinOf(line.url) && asinOf(line.url) !== asin ? ` <span class="small">(earlier product)</span>` : ""}</td>
+          <td>${line.received ? `<span class="pill s-ok">Received${line.receivedDate ? " " + fmtShort(parseD(line.receivedDate)) : ""}</span>` : `<button class="btn good sm" data-recv="${esc(order.id)}|${esc(it.id)}">Mark received</button>`}</td></tr>`).join("")}
+      </tbody></table>` : `<div class="empty list">Not ordered yet.</div>`}
+    </div>
+    <div class="section"><h2>Product changes</h2>
+      ${it.changes.length ? `<table class="hist"><thead><tr><th>Date</th><th>From</th><th>To</th><th>Reason</th></tr></thead><tbody>
+        ${it.changes.slice().sort((a,b) => b.date.localeCompare(a.date)).map(c => `<tr><td>${fmt(parseD(c.date))}</td>
+          <td>${esc(c.fromName)}<br><a class="small" href="${esc(c.fromUrl)}" target="_blank" rel="noopener">${esc(asinOf(c.fromUrl) || shortUrl(c.fromUrl))}</a></td>
+          <td>${esc(c.toName)}<br><a class="small" href="${esc(c.toUrl)}" target="_blank" rel="noopener">${esc(asinOf(c.toUrl) || shortUrl(c.toUrl))}</a></td>
+          <td>${esc(c.note) || "—"}</td></tr>`).join("")}
+      </tbody></table>` : `<div class="empty list">No substitutions yet. Use <b>Replace product</b> when this item changes brand or listing.</div>`}
+    </div>`;
+}
+
+function renderSettings(){
+  const st = state.settings;
+  $("main").innerHTML = `
+    <div class="panel">
+      <h2>Settings</h2>
+      <div class="grid2">
+        <div class="field"><label for="s_office">Office name</label><input id="s_office" value="${esc(st.officeName)}"><span class="hint">Shown in the header, email list and printout.</span></div>
+        <div></div>
+        <div class="field"><label for="s_def">Default reorder interval (days)</label><input id="s_def" type="number" min="1" value="${st.defaultInterval}"><span class="hint">Used for items ordered only once, until there's more history.</span></div>
+        <div class="field"><label for="s_soon">"Due soon" window (days)</label><input id="s_soon" type="number" min="0" value="${st.dueSoonDays}"></div>
+      </div>
+      <button class="btn primary" id="btnSaveSettings">Save settings</button>
+    </div>
+    ${syncPanel()}
+    <div class="panel">
+      <h2>Backup</h2>
+      <p>${syncCfg ? "Your data syncs to GitHub, and every save is kept in the repo's history. A downloaded backup is still a good extra copy." : "Without sync, everything is saved in this browser on this device only. Export now and then, or import a backup to move data to another device."}</p>
+      <div class="toolbar" style="margin:0">
+        <button class="btn primary" id="btnExport">Export backup</button>
+        <label class="btn" for="importFile">Import backup…</label>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+        <button class="btn danger" id="btnReset">Reset to starter data</button>
+      </div>
+      <div class="note">Last export: ${st.lastExport ? fmt(new Date(st.lastExport)) : "never"}</div>
+    </div>`;
+}
+
+function syncPanel(){
+  const c = syncCfg || guessRepo();
+  return `<div class="panel">
+    <h2>Sync with GitHub</h2>
+    <p>Saves everything to <code>${esc(c.path || "data.json")}</code> on the <code>${esc(c.branch || "supply-data")}</code> branch of your repo, so your phone and computer share one copy. Set this up once on each device.</p>
+    <div class="grid2">
+      <div class="field"><label for="g_owner">GitHub username</label><input id="g_owner" value="${esc(c.owner)}" autocapitalize="off" autocomplete="off"></div>
+      <div class="field"><label for="g_repo">Repository</label><input id="g_repo" value="${esc(c.repo)}" autocapitalize="off" autocomplete="off" placeholder="e.g. supply-orders"></div>
+      <div class="field"><label for="g_branch">Data branch</label><input id="g_branch" value="${esc(c.branch)}" autocapitalize="off"><span class="hint">Kept separate so saves don't rebuild your site. Created automatically.</span></div>
+      <div class="field"><label for="g_path">Data file</label><input id="g_path" value="${esc(c.path)}" autocapitalize="off"></div>
+    </div>
+    <div class="field"><label for="g_token">Access token</label><input id="g_token" type="password" autocomplete="off" autocapitalize="off" placeholder="${syncCfg && syncCfg.token ? "Saved on this device — leave blank to keep it" : "github_pat_…"}">
+      <span class="hint">Stored only in this browser. It's never written to the repo or included in backups.</span></div>
+    <div class="field" style="max-width:260px"><label for="g_exp">Token expires on</label><input id="g_exp" type="date" value="${esc(c.expires || "")}">
+      <span class="hint">You'll get a warning here 2 weeks before.</span></div>
+    <div class="toolbar" style="margin:0">
+      <button class="btn primary" id="btnSyncConnect">${syncCfg ? "Save & sync" : "Connect & sync"}</button>
+      ${syncCfg ? `<button class="btn" id="btnSyncNow">Sync now</button><button class="btn danger" id="btnSyncOff">Disconnect this device</button>` : ""}
+    </div>
+    <div class="note">Status: <span id="syncStatus">${esc(syncText())}</span></div>
+    <p class="note">Need a token, or renewing one? <button class="linkbtn" data-help="h-token"><u>Step-by-step in How to</u></button></p>
+  </div>`;
+}
+
+function renderHelp(){
+  const exp = syncCfg && syncCfg.expires ? fmt(parseD(syncCfg.expires)) : null;
+  const S = [
+    ["h-start","First-time setup"],["h-order","Placing an order"],["h-receive","When supplies arrive"],["h-check","Supply check walk-around"],
+    ["h-photos","Photos"],["h-items","Adding & editing supplies"],["h-replace","Substituted products"],["h-status","What the labels mean"],
+    ["h-token","Access token"],["h-renew","Renew the access token"],["h-device","New phone or computer"],["h-backup","Backups & restoring"],
+    ["h-update","Updating this page"],["h-trouble","Troubleshooting"],["h-upkeep","Upkeep checklist"]
+  ];
+  $("main").innerHTML = `<div class="howto">
+  <div class="toc">${S.map(([id,t]) => `<button data-help="${id}">${t}</button>`).join("")}</div>
+
+  <section id="h-start"><h2>First-time setup</h2>
+    <ol>
+      <li>Put <code>index.html</code> in your GitHub repo and turn on GitHub Pages (repo → <b>Settings</b> → <b>Pages</b> → deploy from your main branch).</li>
+      <li>Open the site on your computer. Your supplies and past orders are already loaded.</li>
+      <li>Make an access token (see <button class="linkbtn" data-help="h-token"><u>Access token</u></button>), then go to <b>Settings → Sync with GitHub</b>, paste it, enter its expiration date, and tap <b>Connect &amp; sync</b>.</li>
+      <li>Open the site on your phone and repeat step 3 with the same token. Both devices now share one copy.</li>
+      <li>Optional: add it to your phone's home screen so it opens like an app. iPhone (Safari): <b>Share → Add to Home Screen</b>. Android (Chrome): <b>⋮ menu → Add to Home screen</b>.</li>
+    </ol>
+  </section>
+
+  <section id="h-order"><h2>Placing an order</h2>
+    <ol>
+      <li>Go to <b>Next order</b>. Supplies are sorted with the most overdue at the top.</li>
+      <li>Check the box next to each supply you need and adjust the quantity with − / +. <b>Add all due</b> adds everything overdue or due soon in one tap.</li>
+      <li>Tap <b>Copy for email</b>, then paste into your email. Each line has the supply name, quantity and Amazon link. <b>Print</b> gives you a paper copy with checkboxes.</li>
+      <li>Once the order is actually placed, tap <b>Mark as ordered</b>, check the date, and save. The list clears and the items move to <b>On order</b>.</li>
+    </ol>
+    <p class="tip">Ordering the same things as a past order? In <b>History</b>, tap <b>Reorder these</b> on that order.</p>
+  </section>
+
+  <section id="h-receive"><h2>When supplies arrive</h2>
+    <p>Open <b>On order</b>. Tap <b>Received</b> on each item as it arrives, or <b>Mark all received</b> when the whole order is in. Anything still listed there hasn't shown up yet. The tab's number badge shows how many items are still waiting.</p>
+  </section>
+
+  <section id="h-check"><h2>Supply check walk-around</h2>
+    <ol>
+      <li>On your phone, open <b>Supply check</b>. Each card shows the photo, Amazon item number, the quantity ordered last time and when.</li>
+      <li>If a supply is running low, tap <b>Add … to next order</b>. It adds the same quantity as last time. Tap again to undo.</li>
+      <li>Back at your desk, everything you added is waiting in <b>Next order</b> on your computer (after it syncs, usually a few seconds).</li>
+    </ol>
+  </section>
+
+  <section id="h-photos"><h2>Photos</h2>
+    <p>Amazon doesn't let other sites pull its pictures automatically, so you add photos one of two ways:</p>
+    <ul>
+      <li><b>Take one:</b> on a Supply check card, tap the photo box (or <b>📷 Take / choose photo</b> on a supply's page) and snap the item on the shelf.</li>
+      <li><b>Use Amazon's photo:</b> on the Amazon product page, right-click the main picture (long-press on a phone) → <b>Copy image address</b>. Then on the supply's page tap <b>Paste image address</b>.</li>
+    </ul>
+    <p class="tip">Photos you take are shrunk automatically so they don't fill up storage.</p>
+  </section>
+
+  <section id="h-items"><h2>Adding &amp; editing supplies</h2>
+    <ul>
+      <li><b>Add a new supply:</b> <b>Catalog → + Add supply</b>. Paste the Amazon link; long, messy links are cleaned up and the item number is read from them.</li>
+      <li><b>Edit one:</b> tap it anywhere to open its page, then <b>Edit</b>. You can change the name, category, order unit, usual quantity, pack size and notes.</li>
+      <li><b>Reorder timing:</b> leave <b>Reorder every (days)</b> blank to let the page estimate from past orders, or type a number (e.g. 60) if you know how long it lasts. Supplies ordered only once use the default from Settings (90 days) until there's more history.</li>
+      <li><b>Delete:</b> open <b>Edit</b> → <b>Delete item</b>. Past orders keep their record of it.</li>
+    </ul>
+  </section>
+
+  <section id="h-replace"><h2>When a product is substituted</h2>
+    <p>If a supply switches brand or listing (out of stock, better price), open the supply's page and tap <b>Replace product</b>. Paste the new Amazon link, adjust the name, pack size and unit if needed, and add a reason. The old product is kept in the supply's <b>Product changes</b> history and its past orders still link to the old listing. Add a photo of the new product afterward.</p>
+  </section>
+
+  <section id="h-status"><h2>What the labels mean</h2>
+    <table>
+      <tr><td><span class="pill s-over">Overdue 12d</span></td><td>Past its estimated reorder date by that many days.</td></tr>
+      <tr><td><span class="pill s-soon">Due in 9d</span></td><td>Estimated to be needed within the "due soon" window (21 days by default).</td></tr>
+      <tr><td><span class="pill s-onord">On order since…</span></td><td>Ordered, not marked received yet.</td></tr>
+      <tr><td><span class="pill s-ok">Due Dec 13</span></td><td>Fine for now; that's the estimated next order date.</td></tr>
+      <tr><td><span class="pill s-never">Not ordered yet</span></td><td>No orders on record.</td></tr>
+    </table>
+    <p class="small">Estimates = last order date + the average number of days between this supply's orders. They get better the more orders you record.</p>
+  </section>
+
+  <section id="h-token"><h2>The GitHub access token</h2>
+    <p>The token is the key that lets this page save to your repo. It's stored only in the browser on each device, never in the repo or in backups.${exp ? ` Yours is set to expire <b>${exp}</b>.` : ""}</p>
+    <h3>Make a new token</h3>
+    <ol>
+      <li>Sign in at github.com. Click your profile photo (top right) → <b>Settings</b>.</li>
+      <li>At the bottom of the left menu, click <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+      <li><b>Token name:</b> Supply Orders. <b>Expiration:</b> choose <b>Custom</b> and pick a date up to a year out. Write the date down.</li>
+      <li><b>Repository access:</b> <b>Only select repositories</b> → choose this site's repo.</li>
+      <li><b>Permissions:</b> under Repository permissions, set <b>Contents</b> to <b>Read and write</b>. (Metadata: Read-only is added automatically.) Leave everything else alone.</li>
+      <li>Click <b>Generate token</b> and copy it right away. It starts with <code>github_pat_</code> and GitHub only shows it once.</li>
+    </ol>
+    <h3>Where to put it</h3>
+    <ol>
+      <li>On this page, open <b>Settings → Sync with GitHub</b>.</li>
+      <li>Paste it into <b>Access token</b> and enter the date into <b>Token expires on</b>.</li>
+      <li>Tap <b>Connect &amp; sync</b> (or <b>Save &amp; sync</b> if already connected). The top-right corner should show <b>✓ Synced</b>.</li>
+      <li>Do the same on every device you use. The same token works on all of them.</li>
+    </ol>
+    <p class="warn">Lost a phone or think the token leaked? On GitHub go to <b>Fine-grained tokens</b>, open the token and click <b>Delete</b>. Then make a new one and enter it on your remaining devices. Your data isn't affected.</p>
+  </section>
+
+  <section id="h-renew"><h2>Renew the access token (about once a year)</h2>
+    <p>This page warns you 2 weeks before the date you entered, and GitHub usually emails you about a week before. If it does expire, nothing is lost: each device keeps working and saving locally, it just stops syncing (top-right shows <b>⚠ Sync problem</b>) until you renew.</p>
+    <ol>
+      <li>On github.com: profile photo → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b>.</li>
+      <li>Click the <b>Supply Orders</b> token → <b>Regenerate token</b>. Pick a new expiration date (up to a year) → <b>Regenerate token</b>. It keeps the same repo and permissions.</li>
+      <li>Copy the new token (it's only shown once).</li>
+      <li>On this page: <b>Settings → Sync with GitHub</b> → paste it into <b>Access token</b>, update <b>Token expires on</b>, tap <b>Save &amp; sync</b>.</li>
+      <li>Repeat step 4 on your phone and any other device. Regenerating can stop the old token working right away, so a device you haven't updated yet may show <b>⚠ Sync problem</b>. Nothing on it is lost; it catches up as soon as you paste the new token there.</li>
+    </ol>
+    <p class="tip">If the token is already deleted or you can't find it, just make a new one with the steps in <button class="linkbtn" data-help="h-token"><u>Access token</u></button>.</p>
+  </section>
+
+  <section id="h-device"><h2>Adding a new phone or computer</h2>
+    <p>Open the site on the new device, go to <b>Settings → Sync with GitHub</b>, check the username and repository, paste the token, enter its expiration date, and tap <b>Connect &amp; sync</b>. Everything downloads from GitHub. To remove a device, tap <b>Disconnect this device</b> there.</p>
+  </section>
+
+  <section id="h-backup"><h2>Backups &amp; restoring</h2>
+    <h3>Make a backup file</h3>
+    <p><b>Settings → Backup → Export backup</b> downloads a <code>.json</code> file with all supplies, orders, photos and changes. The token is never included.</p>
+    <h3>Restore or load a backup file</h3>
+    <p><b>Settings → Backup → Import backup…</b> and choose the <code>.json</code> file. This replaces what's on the page, and when sync is on it replaces the shared copy on every device, so export a fresh backup first if you're unsure.</p>
+    <h3>Go back to an earlier version from GitHub</h3>
+    <p>Every save is kept in your repo's history. On github.com, open the repo, switch the branch menu to <b>supply-data</b>, click <b>data.json</b> → <b>History</b>, open the version you want, then click the <b>Download raw file</b> button. Import that file here.</p>
+  </section>
+
+  <section id="h-update"><h2>Updating this page</h2>
+    <p>When you get a new version of <code>index.html</code>, replace the old file in your repo (repo → <code>index.html</code> → pencil icon or <b>Add file → Upload files</b> → commit). Your data lives separately in <code>data.json</code> on the <b>supply-data</b> branch, so it isn't touched. Each device picks up the new page next time it's opened; refresh if it still looks old.</p>
+  </section>
+
+  <section id="h-trouble"><h2>Troubleshooting</h2>
+    <table>
+      <tr><td><b>⚠ Sync problem</b></td><td>Tap it to see the reason in Settings. Most often the token expired or was deleted: <button class="linkbtn" data-help="h-renew"><u>renew it</u></button>. "Can't write to this repo" means the token is missing <b>Contents: Read and write</b>. "Repo not found" means a typo in the username/repo, or the token wasn't given access to that repo.</td></tr>
+      <tr><td><b>○ Offline</b></td><td>No internet. Keep working; changes sync automatically when you're back online.</td></tr>
+      <tr><td><b>Phone and computer don't match</b></td><td>Tap the status in the top-right corner to sync now on each device. Check both show <b>✓ Synced</b>.</td></tr>
+      <tr><td><b>Changes disappeared after clearing the browser</b></td><td>With sync on, just reconnect the device (Settings → Sync) and everything downloads again. Without sync, import your last backup file.</td></tr>
+      <tr><td><b>"Couldn't save — storage may be full"</b></td><td>Usually too many large photos. Remove a few or switch them to Amazon image addresses, then export a backup.</td></tr>
+      <tr><td><b>Copy for email doesn't copy</b></td><td>Some browsers block copying; a box with the list pops up instead. Select all and copy from there.</td></tr>
+    </table>
+  </section>
+
+  <section id="h-upkeep"><h2>Upkeep checklist</h2>
+    <ul>
+      <li><b>Every order:</b> tap <b>Mark as ordered</b> when you place it, and <b>Received</b> when it arrives. This is what keeps the estimates and On order list accurate.</li>
+      <li><b>When a brand changes:</b> use <b>Replace product</b> and add a new photo.</li>
+      <li><b>Every few months:</b> look over reorder timing in the Catalog and set a fixed interval for anything the estimates get wrong.</li>
+      <li><b>Monthly (optional):</b> <b>Export backup</b> and keep the file somewhere safe. GitHub's history is already a backup, so this is extra.</li>
+      <li><b>Once a year:</b> <button class="linkbtn" data-help="h-renew"><u>renew the access token</u></button>${exp ? ` (next: ${exp})` : ""} and enter it on every device.</li>
+    </ul>
+  </section>
+  </div>`;
+}
+
+function renderCart(){
+  const lines = cartLines();
+  const units = lines.reduce((n,l) => n + l.qty, 0);
+  $("cartCount").innerHTML = lines.length ? `${lines.length} item${lines.length>1?"s":""} in next order <span>· ${units} unit${units === 1 ? "" : "s"}</span>` : `<span>Next order is empty</span>`;
+  ["btnCopy","btnPrint","btnClear","btnOrdered"].forEach(b => $(b).disabled = !lines.length);
+  $("cartbar").hidden = !lines.length;
+  $("printSheet").innerHTML = `
+    <h1>Supply Order</h1>
+    <div class="ps-sub">${esc(state.settings.officeName)} · Prepared ${fmt(today())} · ${lines.length} items</div>
+    <table><thead><tr><th></th><th>Item</th><th>Item #</th><th>Qty</th><th>Link</th></tr></thead><tbody>
+    ${lines.map(l => `<tr><td class="box">☐</td><td>${esc(l.name)}</td><td>${esc(asinOf(l.url))}</td><td>${l.qty} × ${esc(l.unit)}</td><td class="url">${esc(shortUrl(l.url))}</td></tr>`).join("")}
+    </tbody></table>
+    <div class="sig"><div>Ordered by</div><div>Date ordered</div><div>Received</div></div>`;
+}
+
+function cartLines(){
+  return state.items.filter(it => state.cart[it.id] != null)
+    .sort((a,b) => (a.category||"").localeCompare(b.category||"") || a.name.localeCompare(b.name))
+    .map(it => ({ itemId:it.id, name:it.name, unit:it.unit, url:it.url, qty: Math.max(1, +state.cart[it.id] || 1) }));
+}
+
+/* ---------- actions ---------- */
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2200); }
+function setQty(id, v){ v = Math.max(1, Math.round(+v || 1)); state.cart[id] = v; save(); render(); }
+function go(t){ tab = t; detailId = null; render(); window.scrollTo(0,0); }
+function receive(orderId, itemId){
+  const o = state.orders.find(x => x.id === orderId); if (!o) return;
+  o.lines.forEach(l => { if (!l.received && (itemId == null || l.itemId === itemId)) { l.received = true; l.receivedDate = iso(today()); } });
+  save(); render(); toast("Marked received");
+}
+
+$("tabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) go(b.dataset.tab); });
+$("summary").addEventListener("click", e => {
+  const j = e.target.closest("[data-jump]"); if (!j) return;
+  if (j.dataset.jump === "onorder") go("onorder"); else { filter = "due"; go("order"); }
+});
+
+$("main").addEventListener("click", e => {
+  const t = e.target, c = sel => t.closest(sel);
+  let el;
+  if ((el = c("[data-f]"))) { filter = el.dataset.f; renderOrder(); return; }
+  if ((el = c("[data-back]"))) { detailId = null; render(); window.scrollTo(0,0); return; }
+  if ((el = c("[data-photo]"))) { photoTarget = el.dataset.photo; $("photoFile").click(); return; }
+  if ((el = c("[data-imgurl]"))) { photoTarget = el.dataset.imgurl; $("i_url").value = ""; $("imgDlg").showModal(); return; }
+  if ((el = c("[data-rmphoto]"))) { const it = item(el.dataset.rmphoto); it.photo = ""; save(); render(); return; }
+  if ((el = c("[data-open]"))) { detailId = el.dataset.open; render(); window.scrollTo(0,0); return; }
+  if ((el = c("[data-addlast]"))) { const it = item(el.dataset.addlast); state.cart[it.id] = lastQtyFor(it); save(); render(); toast("Added " + state.cart[it.id] + " " + it.unit + " to next order"); return; }
+  if ((el = c("[data-unadd]"))) { delete state.cart[el.dataset.unadd]; save(); render(); return; }
+  if ((el = c("[data-recv]"))) { const [o,i] = el.dataset.recv.split("|"); receive(o,i); return; }
+  if ((el = c("[data-recvall]"))) { receive(el.dataset.recvall, null); return; }
+  if ((el = c("[data-replace]"))) { openReplace(el.dataset.replace); return; }
+  if ((el = c("[data-edit]"))) { openItem(el.dataset.edit); return; }
+  if (t.id === "btnNewItem") { openItem(null); return; }
+  if (t.id === "btnAddDue") {
+    state.items.forEach(it => { if (isDue(stats(it)) && state.cart[it.id] == null) state.cart[it.id] = it.qty; });
+    save(); render(); toast("Due items added"); return;
+  }
+  const row = c(".row[data-id]");
+  if (row && t.dataset.act) {
+    const id = row.dataset.id, it = item(id), act = t.dataset.act;
+    if (act === "toggle") { if (t.checked) state.cart[id] = it.qty; else delete state.cart[id]; save(); render(); }
+    else if (act === "inc") setQty(id, state.cart[id] == null ? it.qty : state.cart[id] + 1);
+    else if (act === "dec") setQty(id, state.cart[id] == null ? it.qty : state.cart[id] - 1);
+    return;
+  }
+  if ((el = c("[data-reorder]"))) {
+    const o = state.orders.find(x => x.id === el.dataset.reorder);
+    o.lines.forEach(l => { const it = item(l.itemId); if (it) state.cart[it.id] = l.qty || it.qty; });
+    save(); filter = "cart"; go("order"); toast("Added to next order"); return;
+  }
+  if ((el = c("[data-delorder]"))) {
+    const o = state.orders.find(x => x.id === el.dataset.delorder);
+    if (confirm("Delete the " + fmt(parseD(o.date)) + " order from history?")) { state.orders = state.orders.filter(x => x !== o); save(); render(); }
+    return;
+  }
+  if (t.id === "btnSaveSettings") {
+    state.settings.officeName = $("s_office").value.trim();
+    state.settings.defaultInterval = Math.max(1, +$("s_def").value || 90);
+    state.settings.dueSoonDays = Math.max(0, +$("s_soon").value || 0);
+    save(); render(); toast("Settings saved"); return;
+  }
+  if (t.id === "btnExport") {
+    state.settings.lastExport = new Date().toISOString(); save();
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "supply-orders-backup-" + iso(today()) + ".json";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    render(); return;
+  }
+  if (t.id === "btnReset") {
+    if (confirm("Replace everything with the starter data?" + (syncCfg ? " This also replaces the synced copy on every device." : "") + " Export a backup first if you want to keep your changes.")) { state = clone(SEED); forceStamp(); save(); go("order"); toast("Reset to starter data"); }
+    return;
+  }
+  if (t.id === "btnSyncConnect") {
+    const v = id => $(id).value.trim();
+    const cfg = { owner:v("g_owner"), repo:v("g_repo"), branch:v("g_branch") || "supply-data", path:(v("g_path") || "data.json").replace(/^\/+/, ""), token:v("g_token") || (syncCfg && syncCfg.token) || "", expires:v("g_exp") };
+    if (!cfg.owner || !cfg.repo || !cfg.token) { alert("Fill in your GitHub username, the repository, and the access token."); return; }
+    const same = syncCfg && ["owner","repo","branch","path"].every(k => syncCfg[k] === cfg[k]);
+    cfg.sha = same ? syncCfg.sha : null; cfg.dirty = same ? syncCfg.dirty : false; cfg.lastSync = same ? syncCfg.lastSync : null;
+    syncCfg = cfg; saveSync(); renderSettings();
+    runSync().then(() => { renderSettings(); if (syncState.s === "ok") toast("Connected — this device is synced"); });
+    return;
+  }
+  if (t.id === "btnSyncNow") { runSync().then(() => { if (tab === "settings" && !detailId) renderSettings(); }); return; }
+  if (t.id === "btnSyncOff") {
+    if (confirm("Stop syncing on this device? Your data stays here, and the copy on GitHub isn't touched.")) { syncCfg = null; saveSync(); clearTimeout(pushTimer); setStatus("off"); render(); }
+  }
+});
+$("main").addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.act === "qty") { setQty(t.closest(".row").dataset.id, t.value); return; }
+  if (t.id === "importFile" && t.files[0]) {
+    const r = new FileReader();
+    r.onload = () => {
+      try { const d = JSON.parse(r.result); if (!Array.isArray(d.items) || !Array.isArray(d.orders)) throw 0;
+        if (confirm("Replace current data with this backup (" + d.items.length + " supplies, " + d.orders.length + " orders)?")) { state = normalize(d); forceStamp(); save(); go("order"); toast("Backup imported"); }
+      } catch(err) { alert("That file isn't a valid backup."); }
+    };
+    r.readAsText(t.files[0]); t.value = "";
+  }
+});
+
+/* photos: resize to a small JPEG so many fit in browser storage */
+$("photoFile").addEventListener("change", e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f || !photoTarget) return;
+  const img = new Image(), url = URL.createObjectURL(f);
+  img.onload = () => {
+    const max = 360, k = Math.min(1, max / Math.max(img.width, img.height));
+    const cv = document.createElement("canvas"); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+    const cx = cv.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0,0,cv.width,cv.height); cx.drawImage(img, 0, 0, cv.width, cv.height);
+    item(photoTarget).photo = cv.toDataURL("image/jpeg", 0.78); URL.revokeObjectURL(url);
+    save(); render(); toast("Photo saved");
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); alert("Couldn't read that image."); };
+  img.src = url;
+});
+$("imgForm").addEventListener("submit", () => {
+  const u = $("i_url").value.trim(); if (!u || !photoTarget) return;
+  item(photoTarget).photo = u; save(); render(); toast("Photo saved");
+});
+
+/* cart bar */
+$("btnClear").onclick = () => { if (confirm("Clear the next order list?")) { state.cart = {}; save(); render(); } };
+$("btnPrint").onclick = () => window.print();
+$("btnCopy").onclick = () => {
+  const lines = cartLines();
+  const text = "Supply order" + (state.settings.officeName ? " – " + state.settings.officeName : "") + " – " + fmt(today()) + "\n\n" +
+    lines.map((l,i) => (i+1) + ". " + l.name + "\n   Qty: " + l.qty + " " + l.unit + (l.url ? "\n   " + l.url : "")).join("\n\n");
+  const done = () => toast("Copied — paste it into your email");
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+  else fallbackCopy(text, done);
+};
+function fallbackCopy(text, done){
+  const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch(e){} ta.remove();
+  if (ok) done(); else prompt("Copy this list:", text);
+}
+$("btnOrdered").onclick = () => {
+  $("o_date").value = iso(today());
+  $("o_lines").innerHTML = cartLines().map(l => `<li><span>${esc(l.name)}</span><span class="q">${l.qty} × ${esc(l.unit)}</span></li>`).join("");
+  $("orderDlg").showModal();
+};
+$("orderForm").addEventListener("submit", e => {
+  const d = $("o_date").value; if (!d) { e.preventDefault(); return; }
+  const lines = cartLines().map(({itemId,name,unit,url,qty}) => ({ itemId, name, unit, url, qty, received:false, receivedDate:null }));
+  const existing = state.orders.find(o => o.date === d);
+  if (existing) lines.forEach(l => { const m = existing.lines.find(x => x.itemId === l.itemId); if (m) { m.qty = (m.qty || 0) + l.qty; m.received = false; m.receivedDate = null; } else existing.lines.push(l); });
+  else state.orders.push({ id: uid(), date: d, lines });
+  lines.forEach(l => { const it = item(l.itemId); if (it) it.qty = l.qty; });
+  state.cart = {}; save(); filter = "all"; render(); toast("Order saved — now showing under On order");
+});
+
+/* item dialog */
+function openItem(id){
+  editingId = id;
+  const it = id ? item(id) : { name:"", category:"", unit:"", qty:1, packSize:"", url:"", notes:"", interval:null };
+  $("itemDlgTitle").textContent = id ? "Edit supply" : "Add supply";
+  $("f_name").value = it.name; $("f_cat").value = it.category; $("f_unit").value = it.unit; $("f_qty").value = it.qty; $("f_pack").value = it.packSize || "";
+  $("f_int").value = it.interval || ""; $("f_url").value = it.url; $("f_notes").value = it.notes || "";
+  $("catList").innerHTML = [...new Set(state.items.map(i => i.category))].map(c => `<option value="${esc(c)}">`).join("");
+  $("btnDelItem").style.display = id ? "" : "none";
+  $("itemDlg").showModal();
+}
+$("itemForm").addEventListener("submit", e => {
+  const name = $("f_name").value.trim(); if (!name) { e.preventDefault(); return; }
+  const data = { name, category: $("f_cat").value.trim() || "Other", unit: $("f_unit").value.trim() || "each",
+    qty: Math.max(1, Math.round(+$("f_qty").value || 1)), packSize: $("f_pack").value.trim(),
+    interval: $("f_int").value ? Math.max(1, Math.round(+$("f_int").value)) : null,
+    url: cleanUrl($("f_url").value), notes: $("f_notes").value.trim() };
+  if (editingId) Object.assign(item(editingId), data);
+  else { const it = Object.assign({ id: uid(), photo:"", changes:[] }, data); state.items.push(it); detailId = it.id; }
+  save(); render(); toast(editingId ? "Saved" : "Supply added");
+});
+$("btnDelItem").onclick = () => {
+  const it = item(editingId);
+  if (confirm("Delete \"" + it.name + "\"? Past orders keep their record of it.")) {
+    state.items = state.items.filter(i => i !== it); delete state.cart[it.id]; detailId = null; save(); $("itemDlg").close(); render();
+  }
+};
+
+/* replace product */
+function openReplace(id){
+  editingId = id; const it = item(id);
+  $("r_url").value = ""; $("r_name").value = it.name; $("r_unit").value = it.unit; $("r_pack").value = it.packSize || "";
+  $("r_date").value = iso(today()); $("r_photo").value = ""; $("r_note").value = "";
+  $("replDlg").showModal();
+}
+$("replForm").addEventListener("submit", e => {
+  const it = item(editingId), url = cleanUrl($("r_url").value), name = $("r_name").value.trim();
+  if (!url || !name) { e.preventDefault(); return; }
+  it.changes.push({ date: $("r_date").value || iso(today()), fromName: it.name, fromUrl: it.url, toName: name, toUrl: url, note: $("r_note").value.trim() });
+  it.url = url; it.name = name; it.unit = $("r_unit").value.trim() || it.unit; it.packSize = $("r_pack").value.trim();
+  it.photo = $("r_photo").value.trim();
+  if (state.cart[it.id] != null) toast("Replaced — the next order will use the new product");
+  else toast("Product replaced. Add a photo of the new one when you can.");
+  save(); render();
+});
+
+document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
+
+/* links into the How to tab (from the banner, settings, and its own table of contents) */
+document.addEventListener("click", e => {
+  const h = e.target.closest("[data-help]"); if (!h) return;
+  e.stopPropagation();
+  if (tab !== "help" || detailId) { detailId = null; tab = "help"; render(); }
+  const el = $(h.dataset.help);
+  if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
+}, true);
+
+/* sync triggers: on open, when you come back to the tab, when back online, and every 2 minutes while open */
+$("syncChip").onclick = () => { if (syncState.s === "error") { detailId = null; go("settings"); } else runSync(); };
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && syncCfg && Date.now() - (syncCfg.lastSync || 0) > 15000) runSync(); });
+window.addEventListener("online", () => { if (syncCfg) runSync(); });
+setInterval(() => { if (syncCfg && document.visibilityState === "visible") runSync(); }, 120000);
+
+render();
+setStatus(syncState.s);
+if (syncCfg) runSync();
+})();
+</script>
+</body>
+</html>

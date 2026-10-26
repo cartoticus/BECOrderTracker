@@ -539,11 +539,13 @@
  ],
  "cart": {
   "multifold": 2,
-  "rolltowels": 1
+  "rolltowels": 1,
+  "tissue": 1
  },
  "cartT": {
   "multifold": 1793028083613,
-  "rolltowels": 1793028091701
+  "rolltowels": 1793028091701,
+  "tissue": 1793028099517
  },
  "deleted": {
   "mvjxfud6qng4": 1793028069904

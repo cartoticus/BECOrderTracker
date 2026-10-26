@@ -4,6 +4,8 @@
   "officeName": "Great Barrington Office",
   "defaultInterval": 90,
   "dueSoonDays": 21,
+  "emailTo": "",
+  "emailCc": "",
   "lastExport": "2026-10-22T19:22:20.345Z"
  },
  "items": [

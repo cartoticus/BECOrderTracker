@@ -212,6 +212,7 @@ dialog .df .spacer{flex:1}
 <div class="cartbar" id="cartbar">
   <div class="wrap">
     <div class="count" id="cartCount"></div>
+    <button class="btn" id="btnEmail">✉ Email</button>
     <button class="btn" id="btnCopy">Copy for email</button>
     <button class="btn" id="btnPrint">Print</button>
     <button class="btn danger" id="btnClear">Clear</button>
@@ -396,7 +397,7 @@ function buildSeed(){
       return { itemId:id, name: old ? old.name : it.name, unit:it.unit, url: old ? old.url : it.url, qty, received:true, receivedDate:null };
     })
   }));
-  return { version:2, settings:{ officeName:"Great Barrington Office", defaultInterval:90, dueSoonDays:21, lastExport:null }, items, orders, cart:{}, cartT:{}, settingsU:0, deleted:{} };
+  return { version:2, settings:{ officeName:"Great Barrington Office", defaultInterval:90, dueSoonDays:21, emailTo:"", emailCc:"", lastExport:null }, items, orders, cart:{}, cartT:{}, settingsU:0, deleted:{} };
 }
 const SEED = buildSeed();
 
@@ -903,6 +904,8 @@ function renderSettings(){
         <div></div>
         <div class="field"><label for="s_def">Default reorder interval (days)</label><input id="s_def" type="number" min="1" value="${st.defaultInterval}"><span class="hint">Used for items ordered only once, until there's more history.</span></div>
         <div class="field"><label for="s_soon">"Due soon" window (days)</label><input id="s_soon" type="number" min="0" value="${st.dueSoonDays}"></div>
+        <div class="field"><label for="s_to">Email orders to <span class="small">(optional)</span></label><input id="s_to" type="text" inputmode="email" autocomplete="off" autocapitalize="off" value="${esc(st.emailTo || "")}" placeholder="name@example.com"><span class="hint">Pre-fills the <b>Email</b> button. Separate several with commas.</span></div>
+        <div class="field"><label for="s_cc">CC <span class="small">(optional)</span></label><input id="s_cc" type="text" inputmode="email" autocomplete="off" autocapitalize="off" value="${esc(st.emailCc || "")}"></div>
       </div>
       <button class="btn primary" id="btnSaveSettings">Save settings</button>
     </div>
@@ -969,7 +972,7 @@ function renderHelp(){
     <ol>
       <li>Go to <b>Next order</b>. Supplies are sorted with the most overdue at the top.</li>
       <li>Check the box next to each supply you need and adjust the quantity with − / +. <b>Add all due</b> adds everything overdue or due soon in one tap.</li>
-      <li>Tap <b>Copy for email</b>, then paste into your email. Each line has the supply name, quantity and Amazon link. <b>Print</b> gives you a paper copy with checkboxes.</li>
+      <li>Tap <b>✉ Email</b> to open a new message in your email app with the subject, list, quantities and Amazon links filled in. (Set who it goes to under <b>Settings → Email orders to</b>.) Or tap <b>Copy for email</b> and paste it into any message yourself. <b>Print</b> gives you a paper copy with checkboxes.</li>
       <li>Once the order is actually placed, tap <b>Mark as ordered</b>, check the date, and save. The list clears and the items move to <b>On order</b>.</li>
     </ol>
     <p class="tip">Ordering the same things as a past order? In <b>History</b>, tap <b>Reorder these</b> on that order.</p>
@@ -1088,6 +1091,8 @@ function renderHelp(){
       <tr><td><b>Phone and computer don't match</b></td><td>Tap the status in the top-right corner to sync now on each device. Check both show <b>✓ Synced</b>.</td></tr>
       <tr><td><b>Changes disappeared after clearing the browser</b></td><td>With sync on, just reconnect the device (Settings → Sync) and everything downloads again. Without sync, import your last backup file.</td></tr>
       <tr><td><b>"Couldn't save — storage may be full"</b></td><td>Usually too many large photos. Remove a few or switch them to Amazon image addresses, then export a backup.</td></tr>
+      <tr><td><b>Email button does nothing, or opens the wrong app</b></td><td>It uses your device's default email app. On Windows: <b>Settings → Apps → Default apps</b>, search "mailto" and pick Outlook (or your browser for Gmail). In Chrome with Gmail, you can make Gmail the handler from the icon at the right of Gmail's address bar. The list is also copied each time, so you can paste it into any message.</td></tr>
+      <tr><td><b>Email links are cut off</b></td><td>Some email apps shorten long pre-filled messages. Delete the body and paste: the full list is copied to your clipboard whenever you tap Email.</td></tr>
       <tr><td><b>Copy for email doesn't copy</b></td><td>Some browsers block copying; a box with the list pops up instead. Select all and copy from there.</td></tr>
     </table>
   </section>
@@ -1108,7 +1113,7 @@ function renderCart(){
   const lines = cartLines();
   const units = lines.reduce((n,l) => n + l.qty, 0);
   $("cartCount").innerHTML = lines.length ? `${lines.length} item${lines.length>1?"s":""} in next order <span>· ${units} unit${units === 1 ? "" : "s"}</span>` : `<span>Next order is empty</span>`;
-  ["btnCopy","btnPrint","btnClear","btnOrdered"].forEach(b => $(b).disabled = !lines.length);
+  ["btnEmail","btnCopy","btnPrint","btnClear","btnOrdered"].forEach(b => $(b).disabled = !lines.length);
   $("cartbar").hidden = !lines.length;
   $("printSheet").innerHTML = `
     <h1>Supply Order</h1>
@@ -1185,6 +1190,8 @@ $("main").addEventListener("click", e => {
     state.settings.officeName = $("s_office").value.trim();
     state.settings.defaultInterval = Math.max(1, +$("s_def").value || 90);
     state.settings.dueSoonDays = Math.max(0, +$("s_soon").value || 0);
+    const addrs = id => $(id).value.split(/[,;\s]+/).map(x => x.trim()).filter(Boolean).join(", ");
+    state.settings.emailTo = addrs("s_to"); state.settings.emailCc = addrs("s_cc");
     save(); render(); toast("Settings saved"); return;
   }
   if (t.id === "btnExport") {
@@ -1249,13 +1256,29 @@ $("imgForm").addEventListener("submit", () => {
 /* cart bar */
 $("btnClear").onclick = () => { if (confirm("Clear the next order list?")) { state.cart = {}; save(); render(); } };
 $("btnPrint").onclick = () => window.print();
-$("btnCopy").onclick = () => {
-  const lines = cartLines();
-  const text = "Supply order" + (state.settings.officeName ? " – " + state.settings.officeName : "") + " – " + fmt(today()) + "\n\n" +
-    lines.map((l,i) => (i+1) + ". " + l.name + "\n   Qty: " + l.qty + " " + l.unit + (l.url ? "\n   " + l.url : "")).join("\n\n");
-  const done = () => toast("Copied — paste it into your email");
+function orderSubject(){ return "Supply order" + (state.settings.officeName ? " – " + state.settings.officeName : "") + " – " + fmt(today()); }
+function orderText(){
+  return cartLines().map((l,i) => (i+1) + ". " + l.name + "\n   Qty: " + l.qty + " " + l.unit + (l.url ? "\n   " + l.url : "")).join("\n\n");
+}
+function copyText(text, done){
   if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
   else fallbackCopy(text, done);
+}
+$("btnCopy").onclick = () => copyText(orderSubject() + "\n\n" + orderText(), () => toast("Copied — paste it into your email"));
+/* open the default email app with everything filled in; the list is also copied in case an email app cuts long messages short */
+function mailtoUrl(){
+  const enc = t => encodeURIComponent(t.replace(/\r?\n/g, "\r\n"));
+  const st = state.settings, q = [];
+  if (st.emailCc) q.push("cc=" + encodeURIComponent(st.emailCc));
+  q.push("subject=" + enc(orderSubject()));
+  q.push("body=" + enc("Hello,\n\nPlease order the following:\n\n" + orderText() + "\n\nThank you,\n"));
+  return "mailto:" + (st.emailTo || "").split(", ").filter(Boolean).map(encodeURIComponent).join(",") + "?" + q.join("&");
+}
+$("btnEmail").onclick = () => {
+  const url = mailtoUrl();
+  copyText(orderSubject() + "\n\n" + orderText(), () => {});
+  const a = document.createElement("a"); a.href = url; document.body.appendChild(a); a.click(); a.remove();
+  toast(url.length > 2000 ? "Opening your email… The list is also copied, so if any links look cut off, paste it in instead." : "Opening your email…");
 };
 function fallbackCopy(text, done){
   const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";

@@ -1,0 +1,621 @@
+{
+ "version": 2,
+ "settings": {
+  "officeName": "Great Barrington Office",
+  "defaultInterval": 90,
+  "dueSoonDays": 21,
+  "lastExport": "2026-10-22T19:22:20.345Z"
+ },
+ "items": [
+  {
+   "id": "multifold",
+   "name": "Multifold Paper Towels, 2 Ply",
+   "category": "Janitorial",
+   "unit": "case",
+   "qty": 1,
+   "packSize": "16",
+   "url": "https://www.amazon.com/dp/B004YK2KSM",
+   "photo": "https://m.media-amazon.com/images/I/619vxQsQwwL._SX522_.jpg",
+   "notes": "",
+   "interval": null,
+   "changes": [
+    {
+     "date": "2026-06-10",
+     "fromName": "Multifold Paper Towels (Pacific Blue 21000)",
+     "fromUrl": "https://www.amazon.com/dp/B004YK2KSM",
+     "toName": "Multifold Paper Towels, 3-ply",
+     "toUrl": "https://www.amazon.com/dp/B001AZKS4W",
+     "note": "Switched listings (from order history)"
+    },
+    {
+     "date": "2026-10-22",
+     "fromName": "Multifold Paper Towels, 3-ply",
+     "fromUrl": "https://www.amazon.com/dp/B001AZKS4W",
+     "toName": "Multifold Paper Towels, 2 Ply",
+     "toUrl": "https://www.amazon.com/dp/B004YK2KSM",
+     "note": "better price"
+    }
+   ],
+   "u": 1793025535519
+  },
+  {
+   "id": "rolltowels",
+   "name": "Regular Paper Towels (rolls)",
+   "category": "Janitorial",
+   "unit": "package",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B09BWFX1L6",
+   "photo": "https://m.media-amazon.com/images/I/71v-pTar1AL._AC_SY300_SX300_QL70_FMwebp_.jpg",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "tissue",
+   "name": "Facial Tissue, 2-ply, 30 boxes",
+   "category": "Janitorial",
+   "unit": "carton",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B018HUP15S",
+   "photo": "https://m.media-amazon.com/images/I/41lrnawIrqL._AC_PIbundle-30,TopRight,0,0_SH20_.jpg",
+   "notes": "",
+   "interval": null,
+   "changes": [
+    {
+     "date": "2026-09-11",
+     "fromName": "Facial Tissue (earlier GEN listing)",
+     "fromUrl": "https://www.amazon.com/dp/B01AZGXGVI",
+     "toName": "Facial Tissue, 2-ply, 30 boxes",
+     "toUrl": "https://www.amazon.com/dp/B018HUP15S",
+     "note": "Switched listings (from order history)"
+    }
+   ],
+   "u": 1793025535519
+  },
+  {
+   "id": "toilet",
+   "name": "Toilet Paper, AmazonCommercial",
+   "category": "Janitorial",
+   "unit": "case",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B07KWNSTRR",
+   "photo": "https://m.media-amazon.com/images/I/610DLfCrfqL._AC_SX679_PIbundle-80,TopRight,0,0_SH20_.jpg",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "windex",
+   "name": "Windex Multi-Surface Cleaner",
+   "category": "Janitorial",
+   "unit": "bottle",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B075NPBFP6",
+   "photo": "https://m.media-amazon.com/images/I/71P9SzFuIRL._SX522_.jpg",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "trash",
+   "name": "Trash Bags, Tall Kitchen Drawstring",
+   "category": "Janitorial",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B093X8QQ12",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "paper",
+   "name": "Printer Paper, 8.5×11 White",
+   "category": "Office",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B01FV0F13E",
+   "photo": "https://m.media-amazon.com/images/I/713VtFDeAyL._AC_SX466_.jpg",
+   "notes": "",
+   "interval": null,
+   "changes": [
+    {
+     "date": "2026-09-11",
+     "fromName": "Printer Paper (earlier listing)",
+     "fromUrl": "https://www.amazon.com/dp/B07K8WHH5J",
+     "toName": "Printer Paper, 8.5×11 White",
+     "toUrl": "https://www.amazon.com/dp/B01FV0F13E",
+     "note": "Switched listings (from order history)"
+    }
+   ],
+   "u": 1793025535519
+  },
+  {
+   "id": "highlighters",
+   "name": "Sharpie Highlighters, Green",
+   "category": "Office",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B00006IEJA",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "envelopes",
+   "name": "Manila Envelopes, 9×12 Self-Seal (100)",
+   "category": "Office",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B0BCHR3BNB",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "thermal",
+   "name": "Thermal Paper Rolls 2¼×50 (card terminal)",
+   "category": "Front desk",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B0DSKXB31W",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "feeslip",
+   "name": "Fee Slip Paper",
+   "category": "Front desk",
+   "unit": "ream",
+   "qty": 10,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B009Z0QYHO",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "tonerset",
+   "name": "OCT Printer Toner, Full Set (C1810W)",
+   "category": "Printers & labels",
+   "unit": "set",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B0CZ45Z999",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "tonercyan",
+   "name": "OCT Printer Toner, Cyan (C1810W)",
+   "category": "Printers & labels",
+   "unit": "cartridge",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B09BVKSHHL",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "epson60",
+   "name": "Epson 60 Ink (med rec label printer)",
+   "category": "Printers & labels",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B002QWGI1K",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "dymo",
+   "name": "Dymo Labels 1×1 #30332 (optical)",
+   "category": "Printers & labels",
+   "unit": "roll",
+   "qty": 1,
+   "packSize": "",
+   "url": "https://www.amazon.com/dp/B00004Z60O",
+   "photo": "",
+   "notes": "",
+   "interval": null,
+   "changes": [],
+   "u": 1793025535519
+  },
+  {
+   "id": "mvjvdtxl3dsj",
+   "photo": "data:image/jpeg;base64,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",
+   "changes": [],
+   "name": "Envelope #10 Mailing",
+   "category": "Front desk",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "500",
+   "interval": null,
+   "url": "https://www.amazon.com/dp/B078S5ZL5D",
+   "notes": "",
+   "u": 1793025535519
+  },
+  {
+   "id": "mvjvhzw0jzd8",
+   "photo": "https://m.media-amazon.com/images/I/61gcLz6RnnL._SY879_.jpg",
+   "changes": [],
+   "name": "Purell Hand Sanitizer Pump",
+   "category": "Office",
+   "unit": "bottle",
+   "qty": 6,
+   "packSize": "8oz",
+   "interval": null,
+   "url": "https://www.amazon.com/dp/B01IAI63J0",
+   "notes": "1 bottle per exam lane to be refilled from a larger refill",
+   "u": 1793025535519
+  },
+  {
+   "id": "mvjwkpdhvtth",
+   "photo": "https://m.media-amazon.com/images/I/61fTLPOyRYL._SX466_.jpg",
+   "changes": [],
+   "name": "Hand Sanitizer Refill 1 Gal",
+   "category": "Office",
+   "unit": "Bottle",
+   "qty": 1,
+   "packSize": "1 Gal",
+   "interval": null,
+   "url": "https://www.amazon.com/dp/B0BWZSW3VC",
+   "notes": "",
+   "u": 1793025535519
+  },
+  {
+   "id": "mvjx5s2dyjlo",
+   "photo": "https://m.media-amazon.com/images/I/614wnCTA1hL._AC_SX679_.jpg",
+   "changes": [],
+   "name": "Trash Bags, Can Liners 4 Gal",
+   "category": "Janitorial",
+   "unit": "box",
+   "qty": 1,
+   "packSize": "80ct",
+   "interval": null,
+   "url": "https://www.amazon.com/dp/B09NQGR39K",
+   "notes": "",
+   "u": 1793025535519
+  },
+  {
+   "id": "mvjxbonjsgk0",
+   "photo": "https://m.media-amazon.com/images/I/71jT5Uo-wlL._SX466_.jpg",
+   "changes": [],
+   "name": "Hand Soap Refill, 1 Gal",
+   "category": "Office",
+   "unit": "1 Gal Bottle",
+   "qty": 1,
+   "packSize": "1",
+   "interval": null,
+   "url": "https://www.amazon.com/dp/B0C822FRPY",
+   "notes": "",
+   "u": 1793025535519
+  }
+ ],
+ "orders": [
+  {
+   "id": "o20260911",
+   "date": "2026-09-11",
+   "lines": [
+    {
+     "itemId": "multifold",
+     "name": "Multifold Paper Towels, 3-ply",
+     "unit": "case",
+     "url": "https://www.amazon.com/dp/B001AZKS4W",
+     "qty": 2,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "rolltowels",
+     "name": "Regular Paper Towels (rolls)",
+     "unit": "package",
+     "url": "https://www.amazon.com/dp/B09BWFX1L6",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "thermal",
+     "name": "Thermal Paper Rolls 2¼×50 (card terminal)",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B0DSKXB31W",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "tonercyan",
+     "name": "OCT Printer Toner, Cyan (C1810W)",
+     "unit": "cartridge",
+     "url": "https://www.amazon.com/dp/B09BVKSHHL",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "trash",
+     "name": "Trash Bags, Tall Kitchen Drawstring",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B093X8QQ12",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "highlighters",
+     "name": "Sharpie Highlighters, Green",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B00006IEJA",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "envelopes",
+     "name": "Manila Envelopes, 9×12 Self-Seal (100)",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B0BCHR3BNB",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "tissue",
+     "name": "Facial Tissue, 2-ply, 30 boxes",
+     "unit": "carton",
+     "url": "https://www.amazon.com/dp/B018HUP15S",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "paper",
+     "name": "Printer Paper, 8.5×11 White",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B01FV0F13E",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    }
+   ],
+   "u": 1793025535519
+  },
+  {
+   "id": "o20260610",
+   "date": "2026-06-10",
+   "lines": [
+    {
+     "itemId": "feeslip",
+     "name": "Fee Slip Paper",
+     "unit": "ream",
+     "url": "https://www.amazon.com/dp/B009Z0QYHO",
+     "qty": 10,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "multifold",
+     "name": "Multifold Paper Towels, 3-ply",
+     "unit": "case",
+     "url": "https://www.amazon.com/dp/B001AZKS4W",
+     "qty": 2,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "rolltowels",
+     "name": "Regular Paper Towels (rolls)",
+     "unit": "package",
+     "url": "https://www.amazon.com/dp/B09BWFX1L6",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "epson60",
+     "name": "Epson 60 Ink (med rec label printer)",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B002QWGI1K",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "tonerset",
+     "name": "OCT Printer Toner, Full Set (C1810W)",
+     "unit": "set",
+     "url": "https://www.amazon.com/dp/B0CZ45Z999",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "thermal",
+     "name": "Thermal Paper Rolls 2¼×50 (card terminal)",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B0DSKXB31W",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "dymo",
+     "name": "Dymo Labels 1×1 #30332 (optical)",
+     "unit": "roll",
+     "url": "https://www.amazon.com/dp/B00004Z60O",
+     "qty": 1,
+     "received": true,
+     "receivedDate": null
+    }
+   ],
+   "u": 1793025535519
+  },
+  {
+   "id": "o20260518",
+   "date": "2026-05-18",
+   "lines": [
+    {
+     "itemId": "tissue",
+     "name": "Facial Tissue (earlier GEN listing)",
+     "unit": "carton",
+     "url": "https://www.amazon.com/dp/B01AZGXGVI",
+     "qty": null,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "multifold",
+     "name": "Multifold Paper Towels (Pacific Blue 21000)",
+     "unit": "case",
+     "url": "https://www.amazon.com/dp/B004YK2KSM",
+     "qty": null,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "toilet",
+     "name": "Toilet Paper, AmazonCommercial",
+     "unit": "case",
+     "url": "https://www.amazon.com/dp/B07KWNSTRR",
+     "qty": null,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "windex",
+     "name": "Windex Multi-Surface Cleaner",
+     "unit": "bottle",
+     "url": "https://www.amazon.com/dp/B075NPBFP6",
+     "qty": null,
+     "received": true,
+     "receivedDate": null
+    },
+    {
+     "itemId": "paper",
+     "name": "Printer Paper (earlier listing)",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B07K8WHH5J",
+     "qty": null,
+     "received": true,
+     "receivedDate": null
+    }
+   ],
+   "u": 1793025535519
+  },
+  {
+   "id": "mvjxfud6qng4",
+   "date": "2026-10-22",
+   "lines": [
+    {
+     "itemId": "mvjvdtxl3dsj",
+     "name": "Envelope #10 Mailing",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B078S5ZL5D",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "tissue",
+     "name": "Facial Tissue, 2-ply, 30 boxes",
+     "unit": "carton",
+     "url": "https://www.amazon.com/dp/B018HUP15S",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "multifold",
+     "name": "Multifold Paper Towels, 2 Ply",
+     "unit": "case",
+     "url": "https://www.amazon.com/dp/B004YK2KSM",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "rolltowels",
+     "name": "Regular Paper Towels (rolls)",
+     "unit": "package",
+     "url": "https://www.amazon.com/dp/B09BWFX1L6",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "mvjx5s2dyjlo",
+     "name": "Trash Bags, Can Liners 4 Gal",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B09NQGR39K",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "windex",
+     "name": "Windex Multi-Surface Cleaner",
+     "unit": "bottle",
+     "url": "https://www.amazon.com/dp/B075NPBFP6",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "paper",
+     "name": "Printer Paper, 8.5×11 White",
+     "unit": "box",
+     "url": "https://www.amazon.com/dp/B01FV0F13E",
+     "qty": 1,
+     "received": false,
+     "receivedDate": null
+    },
+    {
+     "itemId": "mvjvhzw0jzd8",
+     "name": "Purell Hand Sanitizer Pump",
+     "unit": "bottle",
+     "url": "https://www.amazon.com/dp/B01IAI63J0",
+     "qty": 6,
+     "received": false,
+     "receivedDate": null
+    }
+   ],
+   "u": 1793025535519
+  }
+ ],
+ "cart": {},
+ "cartT": {},
+ "deleted": {},
+ "settingsU": 1793025535519
+}

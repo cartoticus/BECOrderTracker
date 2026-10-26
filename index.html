@@ -277,13 +277,57 @@ dialog .df .spacer{flex:1}
   <form method="dialog" id="orderForm">
     <div class="dh">Mark as ordered</div>
     <div class="db">
-      <div class="field"><label for="o_date">Order date</label><input id="o_date" type="date" required></div>
+      <div class="grid2">
+        <div class="field"><label for="o_date">Order date</label><input id="o_date" type="date" required></div>
+        <div class="field"><label for="o_no">Order number <span class="small">(optional)</span></label><input id="o_no" autocomplete="off" placeholder="e.g. 113-1234567-1234567"></div>
+      </div>
       <ul class="lines" id="o_lines" style="padding:0"></ul>
       <p class="note">Saves this to History and shows these items under <b>On order</b> until you mark them received. The current list is then cleared.</p>
     </div>
     <div class="df">
       <button type="button" class="btn" data-close>Cancel</button>
       <button type="submit" class="btn primary">Save order</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="lineDlg">
+  <form method="dialog" id="lineForm">
+    <div class="dh" id="lineTitle">Edit item</div>
+    <div class="db">
+      <p class="small" id="lineSub" style="margin-top:0"></p>
+      <div class="grid2">
+        <div class="field"><label for="l_qty">Quantity</label><input id="l_qty" type="number" min="1" step="1"></div>
+        <div class="field"><label for="l_status">Status</label><select id="l_status">
+          <option value="ordered">Ordered</option><option value="shipped">Shipped</option>
+          <option value="backordered">Backordered</option><option value="received">Received</option></select></div>
+      </div>
+      <div class="field"><label for="l_note">Note</label><textarea id="l_note" rows="2" placeholder="e.g. Backordered until Nov 15 · only 1 of 2 cases came"></textarea></div>
+    </div>
+    <div class="df">
+      <button type="button" class="btn danger" id="btnRemoveLine">Remove from order</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="oeDlg">
+  <form method="dialog" id="oeForm">
+    <div class="dh">Edit order</div>
+    <div class="db">
+      <div class="grid2">
+        <div class="field"><label for="oe_date">Order date</label><input id="oe_date" type="date" required></div>
+        <div class="field"><label for="oe_no">Order number <span class="small">(optional)</span></label><input id="oe_no" autocomplete="off"></div>
+      </div>
+      <div class="field"><label for="oe_note">Order note <span class="small">(optional)</span></label><textarea id="oe_note" rows="2" placeholder="e.g. Placed by JoAnn · split into 2 shipments"></textarea></div>
+    </div>
+    <div class="df">
+      <button type="button" class="btn danger" id="btnDelOrder">Delete order</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save</button>
     </div>
   </form>
 </dialog>
@@ -598,8 +642,19 @@ function stats(it){
   if (open) status = "onord";
   return Object.assign(base, { due, days, status });
 }
+const LINE_ST = { ordered:"Ordered", shipped:"Shipped", backordered:"Backordered" };
+function lineStatus(l){ return l.received ? "received" : (l.status || "ordered"); }
+function linePill(l){
+  const st = lineStatus(l);
+  if (st === "received") return `<span class="pill s-ok">Received${l.receivedDate ? " " + fmtShort(parseD(l.receivedDate)) : ""}</span>`;
+  return `<span class="pill ${st === "backordered" ? "s-soon" : "s-onord"}">${LINE_ST[st]}</span>`;
+}
+function pillCls(s){ return s.status === "onord" && s.open.line.status === "backordered" ? "s-soon" : "s-" + s.status; }
 function statusLabel(s){
-  if (s.status === "onord") return "On order since " + fmtShort(parseD(s.open.order.date));
+  if (s.status === "onord") {
+    const st = s.open.line.status, since = fmtShort(parseD(s.open.order.date));
+    return st === "backordered" ? "Backordered (ordered " + since + ")" : st === "shipped" ? "Shipped (ordered " + since + ")" : "On order since " + since;
+  }
   if (s.status === "never") return "Not ordered yet";
   if (s.status === "over") return "Overdue " + (-s.days) + "d";
   if (s.status === "soon") return s.days === 0 ? "Due today" : "Due in " + s.days + "d";
@@ -680,7 +735,7 @@ function renderOrder(){
           <input type="checkbox" data-act="toggle" aria-label="Add ${esc(it.name)}" ${inCart ? "checked" : ""}>
           <button class="linkbtn" data-open="${esc(it.id)}" aria-label="Open ${esc(it.name)}">${thumb(it)}</button>
           <button class="linkbtn" data-open="${esc(it.id)}"><div class="name">${esc(it.name)}</div><div class="meta">${meta}</div></button>
-          <span class="pill s-${s.status}">${statusLabel(s)}</span>
+          <span class="pill ${pillCls(s)}">${statusLabel(s)}</span>
           <div class="qty"><button data-act="dec" aria-label="Less">−</button><input data-act="qty" type="number" min="1" value="${qv}" aria-label="Quantity"><span class="unit">${esc(it.unit)}</span><button data-act="inc" aria-label="More">+</button></div>
           ${it.url ? `<a class="link" href="${esc(it.url)}" target="_blank" rel="noopener">Amazon ↗</a>` : `<span class="link meta">no link</span>`}
         </div>`;
@@ -697,15 +752,16 @@ function bindSearch(id, set, rerender){
 function renderOnOrder(){
   const groups = state.orders.filter(o => o.lines.some(l => !l.received)).sort((a,b) => a.date.localeCompare(b.date));
   $("main").innerHTML = groups.length ? `
-    <p class="small" style="margin-top:0">Items ordered but not yet received. Check them off as boxes arrive.</p>
+    <p class="small" style="margin-top:0">Items ordered but not yet received. Tap <b>Received</b> as boxes arrive, or <b>Edit</b> to change the quantity, mark one backordered, add a note, or remove it.</p>
     ${groups.map(o => {
       const open = o.lines.filter(l => !l.received);
       return `<div class="card">
-        <div class="card-h"><div class="d">Ordered ${fmt(parseD(o.date))}<span>${diff(parseD(o.date), today())} days ago · ${open.length} of ${o.lines.length} still waiting</span></div>
-          <button class="btn good" data-recvall="${esc(o.id)}">Mark all received</button></div>
+        <div class="card-h"><div class="d">Ordered ${fmt(parseD(o.date))}${o.orderNo ? ` · #${esc(o.orderNo)}` : ""}<span>${diff(parseD(o.date), today())} days ago · ${open.length} of ${o.lines.length} still waiting</span>${o.note ? `<div class="small" style="font-weight:400">${esc(o.note)}</div>` : ""}</div>
+          <button class="btn sm" data-editorder="${esc(o.id)}">Edit order</button>
+          <button class="btn good sm" data-recvall="${esc(o.id)}">Mark all received</button></div>
         <ul class="lines">${open.map(l => { const it = item(l.itemId); return `<li>
-          <span style="display:flex;gap:10px;align-items:center">${it ? thumb(it) : ""}<span><span class="name">${esc(it ? it.name : l.name)}</span><br><span class="q">${l.qty} × ${esc(l.unit)}</span></span></span>
-          <span class="r"><button class="btn good sm" data-recv="${esc(o.id)}|${esc(l.itemId)}">Received</button></span></li>`; }).join("")}</ul>
+          <span style="display:flex;gap:10px;align-items:center;min-width:0">${it ? thumb(it) : ""}<span style="min-width:0"><span class="name">${esc(it ? it.name : l.name)}</span><br><span class="q">${l.qty} × ${esc(l.unit)}</span> ${linePill(l)}${l.note ? `<br><span class="small">${esc(l.note)}</span>` : ""}</span></span>
+          <span class="r"><button class="btn sm" data-editline="${esc(o.id)}|${esc(l.itemId)}">Edit</button><button class="btn good sm" data-recv="${esc(o.id)}|${esc(l.itemId)}">Received</button></span></li>`; }).join("")}</ul>
       </div>`;
     }).join("")}` : `<div class="empty">Everything ordered has been received.</div>`;
 }
@@ -729,7 +785,7 @@ function renderCheck(){
                 <div><dt>Last qty</dt><dd style="margin:0">${s.lastQty ? s.lastQty + " × " + esc(it.unit) : "—"}</dd></div>
                 <div><dt>Last ordered</dt><dd style="margin:0">${s.last ? fmt(s.last) : "never"}</dd></div>
               </dl>
-              <span class="pill s-${s.status}">${statusLabel(s)}</span>
+              <span class="pill ${pillCls(s)}">${statusLabel(s)}</span>
             </div>
           </div>
           <div class="act">${inCart
@@ -768,15 +824,15 @@ function renderHistory(){
     const waiting = o.lines.filter(l => !l.received).length;
     return `<div class="card">
       <div class="card-h">
-        <div class="d">${fmt(parseD(o.date))}<span>${o.lines.length} items · ${gap}${waiting ? " · " + waiting + " not received" : ""}</span></div>
+        <div class="d">${fmt(parseD(o.date))}${o.orderNo ? ` · #${esc(o.orderNo)}` : ""}<span>${o.lines.length} items · ${gap}${waiting ? " · " + waiting + " not received" : ""}</span>${o.note ? `<div class="small" style="font-weight:400">${esc(o.note)}</div>` : ""}</div>
         <button class="btn sm" data-reorder="${esc(o.id)}">Reorder these</button>
-        <button class="btn sm danger" data-delorder="${esc(o.id)}">Delete</button>
+        <button class="btn sm" data-editorder="${esc(o.id)}">Edit order</button>
       </div>
       <ul class="lines">${o.lines.map(l => {
         const it = item(l.itemId);
         const swapped = it && l.url && it.url && asinOf(l.url) !== asinOf(it.url);
-        return `<li><span>${it ? `<button class="linkbtn" data-open="${esc(it.id)}"><span class="name" style="font-weight:500">${esc(l.name)}</span></button>` : esc(l.name) + " <span class='small'>(removed)</span>"}${swapped ? ` <span class="small">· earlier product</span>` : ""}</span>
-          <span class="r"><span class="q">${l.qty == null ? "qty not recorded" : l.qty + " × " + esc(l.unit)}</span>${l.received ? "" : `<button class="btn good sm" data-recv="${esc(o.id)}|${esc(l.itemId)}">Received</button>`}</span></li>`;
+        return `<li><span>${it ? `<button class="linkbtn" data-open="${esc(it.id)}"><span class="name" style="font-weight:500">${esc(l.name)}</span></button>` : esc(l.name) + " <span class='small'>(removed)</span>"}${swapped ? ` <span class="small">· earlier product</span>` : ""}${!l.received ? " " + linePill(l) : ""}${l.note ? `<br><span class="small">${esc(l.note)}</span>` : ""}</span>
+          <span class="r"><span class="q">${l.qty == null ? "qty not recorded" : l.qty + " × " + esc(l.unit)}</span><button class="btn sm" data-editline="${esc(o.id)}|${esc(l.itemId)}">Edit</button>${l.received ? "" : `<button class="btn good sm" data-recv="${esc(o.id)}|${esc(l.itemId)}">Received</button>`}</span></li>`;
       }).join("")}</ul>
     </div>`;
   }).join("") : `<div class="empty">No orders yet.</div>`;
@@ -799,7 +855,7 @@ function renderDetail(it){
       <div>
         <div class="small">${esc(it.category)}</div>
         <h2 class="dtitle">${esc(it.name)}</h2>
-        <span class="pill s-${s.status}">${statusLabel(s)}</span>
+        <span class="pill ${pillCls(s)}">${statusLabel(s)}</span>
         <dl class="kv">
           <div><dt>Item # (ASIN)</dt><dd>${asin || "—"}</dd></div>
           <div><dt>Order unit</dt><dd>${it.qty} × ${esc(it.unit)}</dd></div>
@@ -822,9 +878,9 @@ function renderDetail(it){
     </div>
     <div class="section"><h2>Order history</h2>
       ${ls.length ? `<table class="hist"><thead><tr><th>Ordered</th><th>Qty</th><th>Product</th><th>Status</th></tr></thead><tbody>
-        ${ls.map(({order,line}) => `<tr><td>${fmt(parseD(order.date))}</td><td>${line.qty == null ? "—" : line.qty + " " + esc(line.unit)}</td>
+        ${ls.map(({order,line}) => `<tr><td>${fmt(parseD(order.date))}${order.orderNo ? `<br><span class="small">#${esc(order.orderNo)}</span>` : ""}</td><td>${line.qty == null ? "—" : line.qty + " " + esc(line.unit)}</td>
           <td>${line.url ? `<a href="${esc(line.url)}" target="_blank" rel="noopener">${esc(asinOf(line.url) || "link")}</a>` : "—"}${asinOf(line.url) && asinOf(line.url) !== asin ? ` <span class="small">(earlier product)</span>` : ""}</td>
-          <td>${line.received ? `<span class="pill s-ok">Received${line.receivedDate ? " " + fmtShort(parseD(line.receivedDate)) : ""}</span>` : `<button class="btn good sm" data-recv="${esc(order.id)}|${esc(it.id)}">Mark received</button>`}</td></tr>`).join("")}
+          <td>${linePill(line)}${line.note ? `<div class="small">${esc(line.note)}</div>` : ""}<div style="display:flex;gap:6px;margin-top:6px">${line.received ? "" : `<button class="btn good sm" data-recv="${esc(order.id)}|${esc(it.id)}">Received</button>`}<button class="btn sm" data-editline="${esc(order.id)}|${esc(it.id)}">Edit</button></div></td></tr>`).join("")}
       </tbody></table>` : `<div class="empty list">Not ordered yet.</div>`}
     </div>
     <div class="section"><h2>Product changes</h2>
@@ -891,7 +947,7 @@ function syncPanel(){
 function renderHelp(){
   const exp = syncCfg && syncCfg.expires ? fmt(parseD(syncCfg.expires)) : null;
   const S = [
-    ["h-start","First-time setup"],["h-order","Placing an order"],["h-receive","When supplies arrive"],["h-check","Supply check walk-around"],
+    ["h-start","First-time setup"],["h-order","Placing an order"],["h-receive","Tracking orders"],["h-check","Supply check walk-around"],
     ["h-photos","Photos"],["h-items","Adding & editing supplies"],["h-replace","Substituted products"],["h-status","What the labels mean"],
     ["h-token","Access token"],["h-renew","Renew the access token"],["h-device","New phone or computer"],["h-backup","Backups & restoring"],
     ["h-update","Updating this page"],["h-trouble","Troubleshooting"],["h-upkeep","Upkeep checklist"]
@@ -919,8 +975,19 @@ function renderHelp(){
     <p class="tip">Ordering the same things as a past order? In <b>History</b>, tap <b>Reorder these</b> on that order.</p>
   </section>
 
-  <section id="h-receive"><h2>When supplies arrive</h2>
+  <section id="h-receive"><h2>Tracking an order until it arrives</h2>
     <p>Open <b>On order</b>. Tap <b>Received</b> on each item as it arrives, or <b>Mark all received</b> when the whole order is in. Anything still listed there hasn't shown up yet. The tab's number badge shows how many items are still waiting.</p>
+    <h3>Change an item on an order</h3>
+    <p>Tap <b>Edit</b> next to the item. You can:</p>
+    <ul>
+      <li>Change the <b>quantity</b>.</li>
+      <li>Set the <b>status</b>: Ordered, Shipped, Backordered, or Received. Backordered items show in amber everywhere, including Supply check.</li>
+      <li>Add a <b>note</b>, like "backordered until Nov 15" or "only 1 of 2 cases came".</li>
+      <li><b>Remove from order</b> if it was cancelled or never placed. The supply's reorder estimate updates to match.</li>
+    </ul>
+    <p>Marked something received by mistake? Find it in <b>History</b> (or on the supply's page), tap <b>Edit</b>, and set the status back to Ordered.</p>
+    <h3>Order numbers</h3>
+    <p>When you tap <b>Mark as ordered</b> there's an optional <b>Order number</b> box. Add or change it later with <b>Edit order</b> on the On order or History tab, which also lets you fix the date, add a note, or delete the whole order. The number shows on the order and on each supply's history.</p>
   </section>
 
   <section id="h-check"><h2>Supply check walk-around</h2>
@@ -1087,6 +1154,8 @@ $("main").addEventListener("click", e => {
   if ((el = c("[data-unadd]"))) { delete state.cart[el.dataset.unadd]; save(); render(); return; }
   if ((el = c("[data-recv]"))) { const [o,i] = el.dataset.recv.split("|"); receive(o,i); return; }
   if ((el = c("[data-recvall]"))) { receive(el.dataset.recvall, null); return; }
+  if ((el = c("[data-editline]"))) { const [o,i] = el.dataset.editline.split("|"); openLine(o,i); return; }
+  if ((el = c("[data-editorder]"))) { openOrderEdit(el.dataset.editorder); return; }
   if ((el = c("[data-replace]"))) { openReplace(el.dataset.replace); return; }
   if ((el = c("[data-edit]"))) { openItem(el.dataset.edit); return; }
   if (t.id === "btnNewItem") { openItem(null); return; }
@@ -1194,19 +1263,74 @@ function fallbackCopy(text, done){
   if (ok) done(); else prompt("Copy this list:", text);
 }
 $("btnOrdered").onclick = () => {
-  $("o_date").value = iso(today());
+  $("o_date").value = iso(today()); $("o_no").value = "";
   $("o_lines").innerHTML = cartLines().map(l => `<li><span>${esc(l.name)}</span><span class="q">${l.qty} × ${esc(l.unit)}</span></li>`).join("");
   $("orderDlg").showModal();
 };
 $("orderForm").addEventListener("submit", e => {
   const d = $("o_date").value; if (!d) { e.preventDefault(); return; }
   const lines = cartLines().map(({itemId,name,unit,url,qty}) => ({ itemId, name, unit, url, qty, received:false, receivedDate:null }));
-  const existing = state.orders.find(o => o.date === d);
-  if (existing) lines.forEach(l => { const m = existing.lines.find(x => x.itemId === l.itemId); if (m) { m.qty = (m.qty || 0) + l.qty; m.received = false; m.receivedDate = null; } else existing.lines.push(l); });
-  else state.orders.push({ id: uid(), date: d, lines });
+  const no = $("o_no").value.trim();
+  const existing = state.orders.find(o => o.date === d && (o.orderNo || "") === no);
+  if (existing) lines.forEach(l => { const m = existing.lines.find(x => x.itemId === l.itemId); if (m) { m.qty = (m.qty || 0) + l.qty; m.received = false; m.receivedDate = null; m.status = "ordered"; } else existing.lines.push(l); });
+  else state.orders.push(Object.assign({ id: uid(), date: d, lines }, no ? { orderNo: no } : {}));
   lines.forEach(l => { const it = item(l.itemId); if (it) it.qty = l.qty; });
   state.cart = {}; save(); filter = "all"; render(); toast("Order saved — now showing under On order");
 });
+
+/* edit one item on an order */
+let lineRef = null;
+function findLine(oid, iid){ const o = state.orders.find(x => x.id === oid); return o ? { o, l: o.lines.find(x => x.itemId === iid) } : null; }
+function openLine(oid, iid){
+  const f = findLine(oid, iid); if (!f || !f.l) return;
+  lineRef = [oid, iid]; const it = item(iid);
+  $("lineTitle").textContent = it ? it.name : f.l.name;
+  $("lineSub").textContent = "Order of " + fmt(parseD(f.o.date)) + (f.o.orderNo ? " · #" + f.o.orderNo : "") + " · unit: " + f.l.unit;
+  $("l_qty").value = f.l.qty == null ? "" : f.l.qty; $("l_qty").placeholder = f.l.qty == null ? "not recorded" : "";
+  $("l_status").value = lineStatus(f.l); $("l_note").value = f.l.note || "";
+  $("lineDlg").showModal();
+}
+$("lineForm").addEventListener("submit", () => {
+  const f = findLine(...lineRef); if (!f || !f.l) return;
+  const q = $("l_qty").value.trim(), st = $("l_status").value, note = $("l_note").value.trim();
+  f.l.qty = q === "" ? f.l.qty : Math.max(1, Math.round(+q || 1));
+  if (st === "received") { if (!f.l.received) { f.l.received = true; f.l.receivedDate = iso(today()); } }
+  else { f.l.received = false; f.l.receivedDate = null; f.l.status = st; }
+  if (note) f.l.note = note; else delete f.l.note;
+  save(); render(); toast("Saved");
+});
+$("btnRemoveLine").onclick = () => {
+  const f = findLine(...lineRef); if (!f || !f.l) return;
+  const nm = item(f.l.itemId) ? item(f.l.itemId).name : f.l.name;
+  if (f.o.lines.length === 1) {
+    if (!confirm("\"" + nm + "\" is the only item on this order. Remove it and delete the whole order?")) return;
+    state.orders = state.orders.filter(x => x !== f.o);
+  } else {
+    if (!confirm("Remove \"" + nm + "\" from the " + fmt(parseD(f.o.date)) + " order?")) return;
+    f.o.lines = f.o.lines.filter(x => x !== f.l);
+  }
+  $("lineDlg").close(); save(); render(); toast("Removed from order");
+};
+
+/* edit an order's date, number and note */
+let oeId = null;
+function openOrderEdit(id){
+  const o = state.orders.find(x => x.id === id); if (!o) return;
+  oeId = id; $("oe_date").value = o.date; $("oe_no").value = o.orderNo || ""; $("oe_note").value = o.note || "";
+  $("oeDlg").showModal();
+}
+$("oeForm").addEventListener("submit", e => {
+  const o = state.orders.find(x => x.id === oeId), d = $("oe_date").value; if (!o || !d) { e.preventDefault(); return; }
+  o.date = d;
+  const no = $("oe_no").value.trim(), note = $("oe_note").value.trim();
+  if (no) o.orderNo = no; else delete o.orderNo;
+  if (note) o.note = note; else delete o.note;
+  save(); render(); toast("Order saved");
+});
+$("btnDelOrder").onclick = () => {
+  const o = state.orders.find(x => x.id === oeId); if (!o) return;
+  if (confirm("Delete the whole " + fmt(parseD(o.date)) + " order (" + o.lines.length + " items) from history?")) { state.orders = state.orders.filter(x => x !== o); $("oeDlg").close(); save(); render(); toast("Order deleted"); }
+};
 
 /* item dialog */
 function openItem(id){

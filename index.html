@@ -37,6 +37,7 @@ details.help ol{margin:8px 0 0;padding-left:20px;color:var(--muted)}
 details.help li{margin-bottom:4px}
 .banner{margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--soon-bg);color:var(--soon);font-size:14px;font-weight:500}
 .banner.bad{background:var(--over-bg);color:var(--over)}
+.banner.info{background:var(--accent-soft);color:var(--text)}
 .banner[hidden]{display:none}
 .howto{max-width:760px}
 .howto .toc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
@@ -674,8 +675,21 @@ function tokenDaysLeft(){
   if (!syncCfg || !syncCfg.expires) return null;
   return diff(today(), parseD(syncCfg.expires));
 }
+const OFFKEY = "supplyTracker.syncOff";
+function syncOffByChoice(){ try { return localStorage.getItem(OFFKEY) === "1"; } catch(e){ return false; } }
+/* ask the browser to keep this site's data instead of clearing it on its own */
+function keepStorage(){ try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(() => { const el = $("storeStatus"); if (el) storageStatus().then(t => el.textContent = t); }); } catch(e){} }
+async function storageStatus(){
+  try { if (navigator.storage && navigator.storage.persisted) return (await navigator.storage.persisted()) ? "Kept permanently on this device" : "The browser may clear it on its own (see How to → Troubleshooting)"; } catch(e){}
+  return "Unknown";
+}
 function renderBanner(){
   const b = $("banner"); if (!b) return;
+  if (!syncCfg && !syncOffByChoice()) {
+    b.hidden = false; b.className = "banner info";
+    b.innerHTML = `<b>This device isn't syncing.</b> Changes made here stay on this device and won't reach your other devices. <button class="linkbtn" data-gosync><u>Connect it to GitHub</u></button> · <button class="linkbtn" data-help="h-lost"><u>Why did this happen?</u></button>`;
+    return;
+  }
   const d = tokenDaysLeft();
   if (d == null || d > 14) { b.hidden = true; return; }
   b.hidden = false;
@@ -895,6 +909,7 @@ function renderDetail(it){
 }
 
 function renderSettings(){
+  setTimeout(() => storageStatus().then(t => { const el = $("storeStatus"); if (el) el.textContent = t; }), 0);
   const st = state.settings;
   $("main").innerHTML = `
     <div class="panel">
@@ -942,7 +957,7 @@ function syncPanel(){
       <button class="btn primary" id="btnSyncConnect">${syncCfg ? "Save & sync" : "Connect & sync"}</button>
       ${syncCfg ? `<button class="btn" id="btnSyncNow">Sync now</button><button class="btn danger" id="btnSyncOff">Disconnect this device</button>` : ""}
     </div>
-    <div class="note">Status: <span id="syncStatus">${esc(syncText())}</span></div>
+    <div class="note">Status: <span id="syncStatus">${esc(syncText())}</span><br>Browser storage: <span id="storeStatus">checking…</span></div>
     <p class="note">Need a token, or renewing one? <button class="linkbtn" data-help="h-token"><u>Step-by-step in How to</u></button></p>
   </div>`;
 }
@@ -1087,6 +1102,13 @@ function renderHelp(){
   <section id="h-trouble"><h2>Troubleshooting</h2>
     <table>
       <tr><td><b>⚠ Sync problem</b></td><td>Tap it to see the reason in Settings. Most often the token expired or was deleted: <button class="linkbtn" data-help="h-renew"><u>renew it</u></button>. "Can't write to this repo" means the token is missing <b>Contents: Read and write</b>. "Repo not found" means a typo in the username/repo, or the token wasn't given access to that repo.</td></tr>
+      <tr id="h-lost"><td><b>"This device isn't syncing" / sync turned itself off</b></td><td>The page keeps your token in the browser's saved site data. Your token on GitHub is fine; the browser just lost its copy. Paste the token again under <b>Settings → Sync with GitHub</b> and tap <b>Connect &amp; sync</b>: everything downloads and merges, nothing is lost. Common reasons it happens:
+        <ul>
+          <li><b>iPhone home-screen icon:</b> the icon has its own storage, separate from Safari. Connect sync inside the icon itself (open it, then Settings), and use the icon from then on.</li>
+          <li><b>Browser clears data when it closes:</b> Chrome: <b>Settings → Privacy and security → Third-party cookies / Site data</b>, turn off "Delete data sites have saved to your device when you close all windows" (or add <code>[*.]github.io</code> to "Allowed to save data"). Edge: <b>Settings → Privacy → Clear browsing data → Choose what to clear every time you close the browser</b>, turn off "Cookies and other site data".</li>
+          <li><b>Safari not used for a week:</b> Safari erases a site's data if you haven't opened it in about 7 days. Adding it to the home screen and opening it from there avoids this.</li>
+          <li><b>Private/incognito window, a different browser profile, or a cleanup app.</b></li>
+        </ul>Settings also shows <b>Browser storage</b>: "kept permanently" means the browser has agreed not to clear it.</td></tr>
       <tr><td><b>○ Offline</b></td><td>No internet. Keep working; changes sync automatically when you're back online.</td></tr>
       <tr><td><b>Phone and computer don't match</b></td><td>Tap the status in the top-right corner to sync now on each device. Check both show <b>✓ Synced</b>.</td></tr>
       <tr><td><b>Changes disappeared after clearing the browser</b></td><td>With sync on, just reconnect the device (Settings → Sync) and everything downloads again. Without sync, import your last backup file.</td></tr>
@@ -1211,13 +1233,13 @@ $("main").addEventListener("click", e => {
     if (!cfg.owner || !cfg.repo || !cfg.token) { alert("Fill in your GitHub username, the repository, and the access token."); return; }
     const same = syncCfg && ["owner","repo","branch","path"].every(k => syncCfg[k] === cfg[k]);
     cfg.sha = same ? syncCfg.sha : null; cfg.dirty = same ? syncCfg.dirty : false; cfg.lastSync = same ? syncCfg.lastSync : null;
-    syncCfg = cfg; saveSync(); renderSettings();
+    syncCfg = cfg; saveSync(); try { localStorage.removeItem(OFFKEY); } catch(e){} keepStorage(); renderSettings(); renderBanner();
     runSync().then(() => { renderSettings(); if (syncState.s === "ok") toast("Connected — this device is synced"); });
     return;
   }
   if (t.id === "btnSyncNow") { runSync().then(() => { if (tab === "settings" && !detailId) renderSettings(); }); return; }
   if (t.id === "btnSyncOff") {
-    if (confirm("Stop syncing on this device? Your data stays here, and the copy on GitHub isn't touched.")) { syncCfg = null; saveSync(); clearTimeout(pushTimer); setStatus("off"); render(); }
+    if (confirm("Stop syncing on this device? Your data stays here, and the copy on GitHub isn't touched.")) { syncCfg = null; saveSync(); try { localStorage.setItem(OFFKEY, "1"); } catch(e){} clearTimeout(pushTimer); setStatus("off"); render(); }
   }
 });
 $("main").addEventListener("change", e => {
@@ -1421,7 +1443,8 @@ setInterval(() => { if (syncCfg && document.visibilityState === "visible") runSy
 if (restoreFullLinks()) save();
 render();
 setStatus(syncState.s);
-if (syncCfg) runSync();
+if (syncCfg) { runSync(); keepStorage(); }
+document.addEventListener("click", e => { if (e.target.closest("[data-gosync]")) { detailId = null; go("settings"); setTimeout(() => { const el = $("g_token"); if (el) { el.scrollIntoView({ block:"center" }); el.focus(); } }, 50); } });
 })();
 </script>
 </body>

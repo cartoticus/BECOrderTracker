@@ -583,8 +583,8 @@
      "unit": "bottle",
      "url": "https://www.amazon.com/Windex-Powerized-Formula-Surface-Cleaner/dp/B075NN96B2/ref=sr_1_9?crid=1GBIQVO2S8CUF&dib=eyJ2IjoiMSJ9.tkzVTDs_HXcqrXqPKg7xoObj6M4huL_YUeni9_F8NsIwgS8Zr0hJQO0wFG8YAig9iDbkDaWHWi6UoPps89H7sRORkbrFdAKdJ_0OdjxpfKEFsBpKod0tYxob8mZRcUQOlmfrjjbGEZbk-uiAygiAQHOvJsJaj2vF3LjkcLJAZY1U2mYNCvlaqMl_xrZ-LJ4JUQh45UuOZ9iXRmRectrfvqfojpa3DfEzljtyj3QM9d-ZQx3XFKQ66l01n9QPWt_5nnuMabqIdoTzC3B3dByNM8wZ4hOomkGndgI8jQPsJwg.q-QjpI2WiMzuf0j1834ZnR7UH1WITLfK_DAV53pvAy8&dib_tag=se&keywords=windex+multisurface&qid=1793028237&s=industrial&sprefix=windex+multisurface%2Cindustrial%2C160&sr=1-9",
      "qty": 1,
-     "received": false,
-     "receivedDate": null
+     "received": true,
+     "receivedDate": "2026-10-28"
     },
     {
      "itemId": "paper",
@@ -592,8 +592,8 @@
      "unit": "box",
      "url": "https://www.amazon.com/AmazonBasics-Bright-Multipurpose-Copy-Paper/dp/B01FV0F13E/ref=sr_1_1?crid=26SPOLISND6IF&dib=eyJ2IjoiMSJ9.c--L6ofePcOrLH0UbfqZpSCAfvX0LVNATz06KdxyQzM-jWSERCj-_sSfp66dKDR7wRk6ngXsNboQeclju1N4DEGxzAh1DY4vXZoVriip8wg0nGEE-JEDUWs_KyXIM2XLIJgc8h2x9M-e7OZHR_yqz7Tpfc-zbFNbgkcJfmsqoYD6IGUOkx_DuGrp9tIiQHA-lAhWLh8xEHuSF6S8WcqYZk5AAzzDL0Ec5B1gFIp0K2uxOvIY232IEkLJDFxadDDPA0qBlX2JbaquZTxBHcnaygLkwjaoAQS_1w6FMiP3rwk.aA5jem3O2ozkRE4vnX7Fbk3XnStVsBUcORDOyPblwWE&dib_tag=se&keywords=amazon+basics+white+paper+printer&qid=1789148422&sprefix=amazon+basics+white+paper+printer%2Caps%2C179&sr=8-1",
      "qty": 1,
-     "received": false,
-     "receivedDate": null
+     "received": true,
+     "receivedDate": "2026-10-28"
     },
     {
      "itemId": "mvjvhzw0jzd8",
@@ -606,7 +606,7 @@
     }
    ],
    "orderNo": "Emailed Amanda",
-   "u": 1793028721485
+   "u": 1793216401421
   }
  ],
  "cart": {},

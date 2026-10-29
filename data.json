@@ -602,12 +602,12 @@
      "unit": "bottle",
      "url": "https://www.amazon.com/dp/B01IAI63J0",
      "qty": 6,
-     "received": false,
-     "receivedDate": null
+     "received": true,
+     "receivedDate": "2026-10-29"
     }
    ],
    "orderNo": "Emailed Amanda",
-   "u": 1793289163683
+   "u": 1793301829167
   }
  ],
  "cart": {},

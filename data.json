@@ -6,7 +6,7 @@
   "dueSoonDays": 21,
   "emailTo": "",
   "emailCc": "",
-  "lastExport": "2026-10-28T18:26:05.915Z"
+  "lastExport": null
  },
  "settingsU": 1793025535519,
  "items": [
@@ -565,8 +565,8 @@
      "unit": "case",
      "url": "https://www.amazon.com/Pacific-Multifold-Previously-Signature-21000/dp/B004YK2KSM/ref=sr_1_3?crid=KN6GD7KLXAH3&dib=eyJ2IjoiMSJ9.u3saaDe2vBQujHJBRhtEtBWUJHZPu1QO-NRTCKEv8gnEZkMonZGAd0UjobwVRiAkUD4ExxrQX3TLUT_1A1ry9CleFyxYL5bpdLi1KBrU_4LkrY6KWPTl02_Bk6RYnWha6mhVN58A5nc6TpFYwX_fSSAn9kvLpF_S65e43egkT8luaoe64XoNeY1KIbUX9dPx_fTW6P9j7C6x0IF63u2U4TIX_QVEB7GLHQwtkeQa8o0.VZf6xiUsxY8A88b5rt7x18YhzwChTKh4fC33hq7-UhE&dib_tag=se&keywords=multifold+paper+towels+21000&qid=1778876971&sprefix=multifold+paper+towels+21000%2Caps%2C144&sr=8-3",
      "qty": 2,
-     "received": false,
-     "receivedDate": null
+     "received": true,
+     "receivedDate": "2026-10-29"
     },
     {
      "itemId": "rolltowels",
@@ -606,7 +606,7 @@
     }
    ],
    "orderNo": "Emailed Amanda",
-   "u": 1793216401421
+   "u": 1793289150581
   }
  ],
  "cart": {},

@@ -574,8 +574,8 @@
      "unit": "package",
      "url": "https://www.amazon.com/Amazon-Basics-Ply-Paper-Towel/dp/B09BWFX1L6/ref=sr_1_1_ffob_sspa?crid=3BZK3CMUGCZ0P&dib=eyJ2IjoiMSJ9.cZBK_wAzpcoDMCAgYgt40ZDCa92qv32Sgx_hjerWMIHv1LunFWugZQnRgRMUBs-mzWAOERKDBpnrUcLpc4g2-UuNLwleO5Po5ZVRnPsB-d1_oPOkJkAOdE-MX_VQN6EBrN5CjmxQhwnM9v2ortGUBvEa-iX6dc_B08DjLvLTKMlieHB_gyWFvUpTiyQu430Wd0hEPBwzK1i47QiLNPfqZeQ_C_I7LL8x3e5CAt_x-jawJMrngcl4558no46gQ9Ruxp5Doj9W8QHte0yb6UzH85Pi7ePc6lcJcordtVjA45w.kXoo7fNC7JfsdteJnIlSsBbrfO-pjmjIxDhZkdVBaFk&dib_tag=se&keywords=paper+towels&qid=1781027063&rdc=1&sprefix=paper+to%2Caps%2C156&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1",
      "qty": 2,
-     "received": false,
-     "receivedDate": null,
+     "received": true,
+     "receivedDate": "2026-10-29",
      "status": "ordered"
     },
     {
@@ -607,7 +607,7 @@
     }
    ],
    "orderNo": "Emailed Amanda",
-   "u": 1793289156572
+   "u": 1793289163683
   }
  ],
  "cart": {},

@@ -711,18 +711,18 @@
    "photo": "",
    "name": "Med Rec Printer",
    "kind": "Printer",
-   "make": "",
-   "model": "",
-   "equipId": "",
+   "make": "Xerox",
+   "model": "C405",
+   "equipId": "AA9528",
    "serial": "",
-   "location": "",
+   "location": "Medical Records",
    "ip": "",
    "servicePhone": "",
-   "supplyPhone": "",
-   "serviceCo": "",
+   "supplyPhone": "8008420009",
+   "serviceCo": "CBS Xerox Business Systems",
    "account": "",
    "notes": "",
-   "u": 1794002981767
+   "u": 1794003084062
   }
  ]
 }

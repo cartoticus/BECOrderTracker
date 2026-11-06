@@ -93,6 +93,8 @@ img.thumb{background:#fff}
 .s-ok{color:var(--ok);background:var(--ok-bg)} .s-never{color:var(--never);background:var(--never-bg)}
 .s-onord{color:var(--onord);background:var(--onord-bg)}
 .s-low{color:var(--over);background:var(--over-bg)}
+.field .err{font-size:13px;color:var(--over);font-weight:600}
+.field input.bad{border-color:var(--over)}
 .devgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .dcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;gap:12px;text-align:left;cursor:pointer;width:100%;font:inherit;color:inherit}
 .dcard:hover{border-color:var(--muted)}
@@ -251,7 +253,7 @@ dialog .df .spacer{flex:1}
 <input type="file" id="photoFile" accept="image/*" capture="environment" hidden>
 
 <dialog id="itemDlg">
-  <form method="dialog" id="itemForm">
+  <form method="dialog" novalidate id="itemForm">
     <div class="dh" id="itemDlgTitle">Edit item</div>
     <div class="db">
       <div class="field"><label for="f_name">Item name</label><input id="f_name" required></div>
@@ -264,7 +266,7 @@ dialog .df .spacer{flex:1}
         <div class="field"><label for="f_pack">Pack size</label><input id="f_pack" placeholder="e.g. 16 packs × 250 sheets"></div>
       </div>
       <div class="field"><label for="f_int">Reorder every (days)</label><input id="f_int" type="number" min="1" step="1" placeholder="Auto from history"><span class="hint">Leave blank to estimate from past orders.</span></div>
-      <div class="field" id="f_urlWrap"><label for="f_url">Amazon link</label><input id="f_url" type="url" placeholder="Paste the product link"><span class="hint">Paste the full address from the product page. Switching brands? Use <b>Replace product</b> on the item's page so it's logged.</span></div>
+      <div class="field" id="f_urlWrap"><label for="f_url">Amazon link</label><input id="f_url" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="Paste the product link"><span class="hint">Paste the full address from the product page. Switching brands? Use <b>Replace product</b> on the item's page so it's logged.</span></div>
       <div class="grid2">
         <div class="field"><label for="f_ptype">Part type <span class="small">(optional)</span></label><input id="f_ptype" list="ptypeList" placeholder="e.g. Toner – Black, Drum, Fuser"><datalist id="ptypeList">
           <option value="Toner – Black"><option value="Toner – Cyan"><option value="Toner – Magenta"><option value="Toner – Yellow"><option value="Toner set">
@@ -283,17 +285,18 @@ dialog .df .spacer{flex:1}
       <button type="button" class="btn danger" id="btnDelItem">Delete item</button>
       <span class="spacer"></span>
       <button type="button" class="btn" data-close>Cancel</button>
+      <button type="button" class="btn" id="btnSaveAnother">Save &amp; add another</button>
       <button type="submit" class="btn primary">Save</button>
     </div>
   </form>
 </dialog>
 
 <dialog id="replDlg">
-  <form method="dialog" id="replForm">
+  <form method="dialog" novalidate id="replForm">
     <div class="dh">Replace product</div>
     <div class="db">
       <p class="small" style="margin-top:0">Use this when the item is substituted or switched to a different brand. The old product is kept in the item's history.</p>
-      <div class="field"><label for="r_url">New Amazon link</label><input id="r_url" type="url" required placeholder="Paste the new product link"></div>
+      <div class="field"><label for="r_url">New Amazon link</label><input id="r_url" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" required placeholder="Paste the new product link"></div>
       <div class="field"><label for="r_name">Item name</label><input id="r_name" required></div>
       <div class="grid2">
         <div class="field"><label for="r_unit">Order unit</label><input id="r_unit"></div>
@@ -301,7 +304,7 @@ dialog .df .spacer{flex:1}
       </div>
       <div class="grid2">
         <div class="field"><label for="r_date">Date of change</label><input id="r_date" type="date" required></div>
-        <div class="field"><label for="r_photo">New photo address (optional)</label><input id="r_photo" type="url" placeholder="Image address"></div>
+        <div class="field"><label for="r_photo">New photo address (optional)</label><input id="r_photo" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="Image address"></div>
       </div>
       <div class="field"><label for="r_note">Reason</label><input id="r_note" placeholder="Out of stock, better price, vendor change…"></div>
     </div>
@@ -313,7 +316,7 @@ dialog .df .spacer{flex:1}
 </dialog>
 
 <dialog id="orderDlg">
-  <form method="dialog" id="orderForm">
+  <form method="dialog" novalidate id="orderForm">
     <div class="dh">Mark as ordered</div>
     <div class="db">
       <div class="grid2">
@@ -331,7 +334,7 @@ dialog .df .spacer{flex:1}
 </dialog>
 
 <dialog id="lineDlg">
-  <form method="dialog" id="lineForm">
+  <form method="dialog" novalidate id="lineForm">
     <div class="dh" id="lineTitle">Edit item</div>
     <div class="db">
       <p class="small" id="lineSub" style="margin-top:0"></p>
@@ -353,7 +356,7 @@ dialog .df .spacer{flex:1}
 </dialog>
 
 <dialog id="oeDlg">
-  <form method="dialog" id="oeForm">
+  <form method="dialog" novalidate id="oeForm">
     <div class="dh">Edit order</div>
     <div class="db">
       <div class="grid2">
@@ -372,7 +375,7 @@ dialog .df .spacer{flex:1}
 </dialog>
 
 <dialog id="devDlg">
-  <form method="dialog" id="devForm">
+  <form method="dialog" novalidate id="devForm">
     <div class="dh" id="devDlgTitle">Printer</div>
     <div class="db">
       <div class="grid2">
@@ -402,7 +405,7 @@ dialog .df .spacer{flex:1}
 </dialog>
 
 <dialog id="linkDlg">
-  <form method="dialog" id="linkForm">
+  <form method="dialog" novalidate id="linkForm">
     <div class="dh" id="linkTitle">Supplies for this printer</div>
     <div class="db">
       <p class="small" style="margin-top:0">Check every supply this printer uses. A supply can belong to more than one printer.</p>
@@ -416,11 +419,11 @@ dialog .df .spacer{flex:1}
 </dialog>
 
 <dialog id="imgDlg">
-  <form method="dialog" id="imgForm">
+  <form method="dialog" novalidate id="imgForm">
     <div class="dh">Photo from Amazon</div>
     <div class="db">
       <p class="small" style="margin-top:0">On the Amazon product page, right-click the main photo (or long-press on a phone) and choose <b>Copy image address</b>. Paste it here.</p>
-      <div class="field"><label for="i_url">Image address</label><input id="i_url" type="url" required placeholder="https://m.media-amazon.com/images/I/…"></div>
+      <div class="field"><label for="i_url">Image address</label><input id="i_url" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" required placeholder="https://m.media-amazon.com/images/I/…"></div>
     </div>
     <div class="df">
       <button type="button" class="btn" data-close>Cancel</button>
@@ -696,8 +699,23 @@ function asinOf(url){
   return m ? m[1].toUpperCase() : "";
 }
 /* keep the full link as pasted; only unwrap Amazon's sponsored-ad redirect into the real product link */
-function cleanUrl(url){
+/* accept links however they're pasted: add https:// when it's missing */
+function fixUrl(url){
   url = (url || "").trim();
+  if (url && !/^[a-z][a-z0-9+.-]*:/i.test(url) && /^([\w-]+\.)+[a-z]{2,}(\/|$|\?)/i.test(url)) url = "https://" + url;
+  return url;
+}
+function need(id, msg){
+  const el = $(id), f = el.closest(".field");
+  if (f && el.closest("dialog")) {
+    let m = f.querySelector(".err"); if (!m) { m = document.createElement("span"); m.className = "err"; f.appendChild(m); }
+    m.textContent = msg; el.classList.add("bad");
+    el.addEventListener("input", () => { m.remove(); el.classList.remove("bad"); }, { once:true });
+  } else toast(msg);
+  el.focus(); el.scrollIntoView({ block:"center" });
+}
+function cleanUrl(url){
+  url = fixUrl(url);
   try {
     const u = new URL(url);
     if (/amazon\./i.test(u.hostname) && /\/sspa\/click/i.test(u.pathname) && u.searchParams.get("url")) return u.origin + u.searchParams.get("url");
@@ -1518,8 +1536,8 @@ $("photoFile").addEventListener("change", e => {
   img.onerror = () => { URL.revokeObjectURL(url); alert("Couldn't read that image."); };
   img.src = url;
 });
-$("imgForm").addEventListener("submit", () => {
-  const u = $("i_url").value.trim(); if (!u || !photoTarget) return;
+$("imgForm").addEventListener("submit", e => {
+  const u = fixUrl($("i_url").value); if (!photoTarget) return; if (!u) { e.preventDefault(); need("i_url", "Paste the image address"); return; }
   photoObj(photoTarget).photo = u; save(); render(); toast("Photo saved");
 });
 
@@ -1562,7 +1580,7 @@ $("btnOrdered").onclick = () => {
   $("orderDlg").showModal();
 };
 $("orderForm").addEventListener("submit", e => {
-  const d = $("o_date").value; if (!d) { e.preventDefault(); return; }
+  const d = $("o_date").value; if (!d) { e.preventDefault(); need("o_date", "Pick the order date"); return; }
   const lines = cartLines().map(({itemId,name,unit,url,qty}) => ({ itemId, name, unit, url, qty, received:false, receivedDate:null }));
   const no = $("o_no").value.trim();
   const existing = state.orders.find(o => o.date === d && (o.orderNo || "") === no);
@@ -1614,7 +1632,7 @@ function openOrderEdit(id){
   $("oeDlg").showModal();
 }
 $("oeForm").addEventListener("submit", e => {
-  const o = state.orders.find(x => x.id === oeId), d = $("oe_date").value; if (!o || !d) { e.preventDefault(); return; }
+  const o = state.orders.find(x => x.id === oeId), d = $("oe_date").value; if (!o) return; if (!d) { e.preventDefault(); need("oe_date", "Pick the order date"); return; }
   o.date = d;
   const no = $("oe_no").value.trim(), note = $("oe_note").value.trim();
   if (no) o.orderNo = no; else delete o.orderNo;
@@ -1637,7 +1655,7 @@ function openDev(id){
   $("devDlg").showModal();
 }
 $("devForm").addEventListener("submit", e => {
-  const name = $("d_name").value.trim(); if (!name) { e.preventDefault(); return; }
+  const name = $("d_name").value.trim(); if (!name) { e.preventDefault(); need("d_name", "Enter a name for this printer"); return; }
   const data = {}; Object.entries(DEV_FIELDS).forEach(([el,k]) => data[k] = $(el).value.trim());
   if (devEditing) Object.assign(device(devEditing), data);
   else { const d = Object.assign({ id: "dev-" + uid(), photo:"" }, data); state.devices.push(d); devId = d.id; tab = "printers"; }
@@ -1671,9 +1689,10 @@ $("linkForm").addEventListener("submit", () => {
 });
 
 /* item dialog */
-function openItem(id, forDev){
+function openItem(id, forDev, keep){
   editingId = id;
-  const it = id ? item(id) : { name:"", category: forDev ? "Printers & labels" : "", unit: forDev ? "cartridge" : "", qty:1, packSize:"", url:"", notes:"", interval:null, deviceIds: forDev ? [forDev] : [] };
+  const it = id ? item(id) : Object.assign({ name:"", category: forDev ? "Printers & labels" : "", unit: forDev ? "cartridge" : "", qty:1, packSize:"", url:"", notes:"", interval:null, deviceIds: forDev ? [forDev] : [] }, keep || {});
+  $("btnSaveAnother").style.display = id ? "none" : "";
   $("f_ptype").value = it.partType || ""; $("f_partno").value = it.partNo || "";
   $("f_oh").value = counted(it) ? +it.onHand : ""; $("f_min").value = it.minOnHand != null ? it.minOnHand : "";
   const devs = state.devices.slice().sort((a,b) => a.name.localeCompare(b.name));
@@ -1686,8 +1705,8 @@ function openItem(id, forDev){
   $("btnDelItem").style.display = id ? "" : "none";
   $("itemDlg").showModal();
 }
-$("itemForm").addEventListener("submit", e => {
-  const name = $("f_name").value.trim(); if (!name) { e.preventDefault(); return; }
+function saveItemForm(){
+  const name = $("f_name").value.trim(); if (!name) { need("f_name", "Enter a name for this supply"); return null; }
   const data = { name, category: $("f_cat").value.trim() || "Other", unit: $("f_unit").value.trim() || "each",
     qty: Math.max(1, Math.round(+$("f_qty").value || 1)), packSize: $("f_pack").value.trim(),
     interval: $("f_int").value ? Math.max(1, Math.round(+$("f_int").value)) : null,
@@ -1699,9 +1718,23 @@ $("itemForm").addEventListener("submit", e => {
   data.minOnHand = mn === "" ? null : Math.max(0, Math.round(+mn || 0));
   ["partType","partNo"].forEach(k => { if (!data[k]) data[k] = undefined; });
   if (editingId) { const it = item(editingId); Object.assign(it, data); if (oh === "") delete it.onHand; ["partType","partNo"].forEach(k => { if (it[k] === undefined) delete it[k]; }); }
-  else { const it = Object.assign({ id: uid(), photo:"", changes:[] }, data); state.items.push(it); detailId = it.id; }
-  save(); render(); toast(editingId ? "Saved" : "Supply added");
+  let it;
+  if (editingId) it = item(editingId);
+  else { it = Object.assign({ id: uid(), photo:"", changes:[] }, data); state.items.push(it); }
+  save(); return it;
+}
+$("itemForm").addEventListener("submit", e => {
+  const wasNew = !editingId, it = saveItemForm();
+  if (!it) { e.preventDefault(); return; }
+  if (wasNew && !devId) detailId = it.id;          // from a printer's page, stay on the printer
+  render(); toast(wasNew ? "Supply added" : "Saved");
 });
+$("btnSaveAnother").onclick = () => {
+  const keep = { category: $("f_cat").value.trim(), unit: $("f_unit").value.trim(), deviceIds: [...$("f_devs").querySelectorAll("input:checked")].map(x => x.value) };
+  const it = saveItemForm(); if (!it) return;
+  render(); toast("Added " + it.name + " — enter the next one");
+  openItem(null, null, keep); $("f_name").focus();
+};
 $("btnDelItem").onclick = () => {
   const it = item(editingId);
   if (confirm("Delete \"" + it.name + "\"? Past orders keep their record of it.")) {
@@ -1718,10 +1751,11 @@ function openReplace(id){
 }
 $("replForm").addEventListener("submit", e => {
   const it = item(editingId), url = cleanUrl($("r_url").value), name = $("r_name").value.trim();
-  if (!url || !name) { e.preventDefault(); return; }
+  if (!url) { e.preventDefault(); need("r_url", "Paste the new product link"); return; }
+  if (!name) { e.preventDefault(); need("r_name", "Enter a name"); return; }
   it.changes.push({ date: $("r_date").value || iso(today()), fromName: it.name, fromUrl: it.url, toName: name, toUrl: url, note: $("r_note").value.trim() });
   it.url = url; it.name = name; it.unit = $("r_unit").value.trim() || it.unit; it.packSize = $("r_pack").value.trim();
-  it.photo = $("r_photo").value.trim();
+  it.photo = fixUrl($("r_photo").value);
   if (state.cart[it.id] != null) toast("Replaced — the next order will use the new product");
   else toast("Product replaced. Add a photo of the new one when you can.");
   save(); render();

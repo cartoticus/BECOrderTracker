@@ -39,7 +39,8 @@
      "note": "better price"
     }
    ],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "rolltowels",
@@ -53,7 +54,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "tissue",
@@ -76,7 +78,8 @@
      "note": "Switched listings (from order history)"
     }
    ],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "toilet",
@@ -90,7 +93,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "windex",
@@ -104,7 +108,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "trash",
@@ -118,7 +123,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "paper",
@@ -141,7 +147,8 @@
      "note": "Switched listings (from order history)"
     }
    ],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "highlighters",
@@ -155,7 +162,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "envelopes",
@@ -169,7 +177,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "thermal",
@@ -183,7 +192,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "feeslip",
@@ -197,7 +207,8 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": []
   },
   {
    "id": "tonerset",
@@ -211,7 +222,10 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": [
+    "dev-oct"
+   ]
   },
   {
    "id": "tonercyan",
@@ -225,7 +239,10 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": [
+    "dev-oct"
+   ]
   },
   {
    "id": "epson60",
@@ -239,7 +256,10 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": [
+    "dev-medrec"
+   ]
   },
   {
    "id": "dymo",
@@ -253,7 +273,10 @@
    "notes": "",
    "interval": null,
    "changes": [],
-   "u": 1793198054969
+   "u": 1793198054969,
+   "deviceIds": [
+    "dev-optical"
+   ]
   },
   {
    "id": "mvjvdtxl3dsj",
@@ -267,7 +290,8 @@
    "interval": null,
    "url": "https://www.amazon.com/dp/B078S5ZL5D",
    "notes": "",
-   "u": 1793025535519
+   "u": 1793025535519,
+   "deviceIds": []
   },
   {
    "id": "mvjvhzw0jzd8",
@@ -281,7 +305,8 @@
    "interval": null,
    "url": "https://www.amazon.com/dp/B01IAI63J0",
    "notes": "1 bottle per exam lane to be refilled from a larger refill",
-   "u": 1793025535519
+   "u": 1793025535519,
+   "deviceIds": []
   },
   {
    "id": "mvjwkpdhvtth",
@@ -295,7 +320,8 @@
    "interval": null,
    "url": "https://www.amazon.com/dp/B0BWZSW3VC",
    "notes": "",
-   "u": 1793025535519
+   "u": 1793025535519,
+   "deviceIds": []
   },
   {
    "id": "mvjx5s2dyjlo",
@@ -309,7 +335,8 @@
    "interval": null,
    "url": "https://www.amazon.com/dp/B09NQGR39K",
    "notes": "",
-   "u": 1793025535519
+   "u": 1793025535519,
+   "deviceIds": []
   },
   {
    "id": "mvjxbonjsgk0",
@@ -323,7 +350,8 @@
    "interval": null,
    "url": "https://www.amazon.com/dp/B0C822FRPY",
    "notes": "",
-   "u": 1793025535519
+   "u": 1793025535519,
+   "deviceIds": []
   }
  ],
  "orders": [
@@ -622,5 +650,61 @@
  },
  "deleted": {
   "mvjxfud6qng4": 1793216396793
- }
+ },
+ "devices": [
+  {
+   "equipId": "",
+   "serial": "",
+   "location": "",
+   "ip": "",
+   "servicePhone": "",
+   "supplyPhone": "",
+   "serviceCo": "",
+   "account": "",
+   "notes": "",
+   "photo": "",
+   "u": 1,
+   "id": "dev-oct",
+   "name": "OCT Printer",
+   "kind": "Printer",
+   "make": "Samsung",
+   "model": "Xpress SL-C1810W"
+  },
+  {
+   "equipId": "",
+   "serial": "",
+   "location": "",
+   "ip": "",
+   "servicePhone": "",
+   "supplyPhone": "",
+   "serviceCo": "",
+   "account": "",
+   "notes": "Uses Epson 60 ink.",
+   "photo": "",
+   "u": 1,
+   "id": "dev-medrec",
+   "name": "Med Rec Label Printer",
+   "kind": "Label printer",
+   "make": "Epson",
+   "model": ""
+  },
+  {
+   "equipId": "",
+   "serial": "",
+   "location": "",
+   "ip": "",
+   "servicePhone": "",
+   "supplyPhone": "",
+   "serviceCo": "",
+   "account": "",
+   "notes": "Uses Dymo 30332 1×1 labels.",
+   "photo": "",
+   "u": 1,
+   "id": "dev-optical",
+   "name": "Optical Label Printer",
+   "kind": "Label printer",
+   "make": "DYMO",
+   "model": "LabelWriter"
+  }
+ ]
 }

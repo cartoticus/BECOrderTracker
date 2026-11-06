@@ -705,6 +705,24 @@
    "kind": "Label printer",
    "make": "DYMO",
    "model": "LabelWriter"
+  },
+  {
+   "id": "dev-mw5j2007ug86",
+   "photo": "",
+   "name": "Med Rec Printer",
+   "kind": "Printer",
+   "make": "",
+   "model": "",
+   "equipId": "",
+   "serial": "",
+   "location": "",
+   "ip": "",
+   "servicePhone": "",
+   "supplyPhone": "",
+   "serviceCo": "",
+   "account": "",
+   "notes": "",
+   "u": 1794002981767
   }
  ]
 }

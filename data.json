@@ -413,6 +413,26 @@
    "onHand": 2,
    "minOnHand": 1,
    "u": 1794403895838
+  },
+  {
+   "id": "mwc5rgwu5bpu",
+   "photo": "",
+   "changes": [],
+   "name": "Magenta Toner",
+   "category": "Printers & labels",
+   "unit": "cartridge",
+   "qty": 1,
+   "packSize": "1",
+   "interval": null,
+   "url": "",
+   "notes": "",
+   "partType": "Toner – Magenta",
+   "deviceIds": [
+    "dev-mw5j2007ug86"
+   ],
+   "onHand": 2,
+   "minOnHand": 1,
+   "u": 1794403918686
   }
  ],
  "orders": [

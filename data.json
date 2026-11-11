@@ -433,6 +433,26 @@
    "onHand": 2,
    "minOnHand": 1,
    "u": 1794403918686
+  },
+  {
+   "id": "mwc5yjdmwx17",
+   "photo": "",
+   "changes": [],
+   "name": "Fuser",
+   "category": "Printers & labels",
+   "unit": "cartridge",
+   "qty": 1,
+   "packSize": "1",
+   "interval": null,
+   "url": "",
+   "notes": "",
+   "partType": "Fuser",
+   "deviceIds": [
+    "dev-mw5j2007ug86"
+   ],
+   "onHand": 0,
+   "minOnHand": null,
+   "u": 1794404248474
   }
  ],
  "orders": [

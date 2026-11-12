@@ -370,9 +370,9 @@
    "deviceIds": [
     "dev-mw5j2007ug86"
    ],
-   "onHand": 0,
+   "onHand": 1,
    "minOnHand": 1,
-   "u": 1794003161982
+   "u": 1794514316718
   },
   {
    "id": "mwc5qhpqeno1",
@@ -390,9 +390,9 @@
    "deviceIds": [
     "dev-mw5j2007ug86"
    ],
-   "onHand": 1,
+   "onHand": 2,
    "minOnHand": 1,
-   "u": 1794403873070
+   "u": 1794514317621
   },
   {
    "id": "mwc5qza68h1h",
@@ -765,8 +765,8 @@
      "unit": "cartridge",
      "url": "",
      "qty": 1,
-     "received": false,
-     "receivedDate": null
+     "received": true,
+     "receivedDate": "2026-11-12"
     },
     {
      "itemId": "mwc5qhpqeno1",
@@ -774,12 +774,12 @@
      "unit": "cartridge",
      "url": "",
      "qty": 1,
-     "received": false,
-     "receivedDate": null
+     "received": true,
+     "receivedDate": "2026-11-12"
     }
    ],
    "orderNo": "SO1530932",
-   "u": 1794404473059
+   "u": 1794514317621
   },
   {
    "id": "mwc63myj1gxu",

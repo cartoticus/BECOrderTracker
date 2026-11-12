@@ -111,7 +111,11 @@ img.thumb{background:#fff}
 .checks{display:flex;flex-direction:column;gap:2px;max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:9px;padding:6px 10px}
 .checks label{display:flex;gap:8px;align-items:center;font-weight:400;font-size:14px;padding:4px 0;cursor:pointer}
 .checks h4{margin:8px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.checks input{width:17px;height:17px;accent-color:var(--accent)}
+.checks input,.field .checks input{width:17px;height:17px;flex:0 0 17px;padding:0;margin:0;accent-color:var(--accent)}
+.checks label{justify-content:flex-start;text-align:left}
+details.fgroup{border:1px solid var(--line);border-radius:10px;padding:0 12px;margin:0 0 12px}
+details.fgroup summary{cursor:pointer;font-weight:600;font-size:14px;padding:11px 0}
+details.fgroup[open] summary{margin-bottom:4px}
 .qty{display:flex;align-items:center;gap:4px}
 .qty button{width:30px;height:30px;border:1px solid var(--line);background:var(--surface);border-radius:7px;cursor:pointer;line-height:1}
 .qty input{width:46px;text-align:center;padding:5px;border:1px solid var(--line);border-radius:7px;background:var(--surface)}
@@ -267,18 +271,24 @@ dialog .df .spacer{flex:1}
       </div>
       <div class="field"><label for="f_int">Reorder every (days)</label><input id="f_int" type="number" min="1" step="1" placeholder="Auto from history"><span class="hint">Leave blank to estimate from past orders.</span></div>
       <div class="field" id="f_urlWrap"><label for="f_url">Amazon link</label><input id="f_url" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="Paste the product link"><span class="hint">Paste the full address from the product page. Switching brands? Use <b>Replace product</b> on the item's page so it's logged.</span></div>
-      <div class="grid2">
+      <div class="field"><label for="f_photo">Photo link <span class="small">(optional)</span></label>
+        <div style="display:flex;gap:10px;align-items:center"><input id="f_photo" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="Paste the image address" style="flex:1"><img id="f_photoPrev" class="thumb" alt="" hidden></div>
+        <span class="hint">On Amazon, right-click the main photo (long-press on a phone) → <b>Copy image address</b>. You can also take a photo on the supply's page.</span></div>
+      <details class="fgroup" id="f_stockBox"><summary>On-hand count <span class="small">(optional)</span></summary>
+        <div class="grid2">
+        <div class="field"><label for="f_oh">On hand <span class="small">(optional)</span></label><input id="f_oh" type="number" min="0" step="1" placeholder="Not counted"><span class="hint">Counted in order units. Goes up automatically when an order is marked received.</span></div>
+        <div class="field"><label for="f_min">Reorder when on hand is at or below</label><input id="f_min" type="number" min="0" step="1" placeholder="No minimum"><span class="hint">Shows <b>Low</b> and counts as due when it gets there.</span></div></div>
+      </details>
+      <details class="fgroup" id="f_printerBox"><summary>Printer part details <span class="small">(for toner, drums, fusers…)</span></summary>
+        <div class="grid2">
         <div class="field"><label for="f_ptype">Part type <span class="small">(optional)</span></label><input id="f_ptype" list="ptypeList" placeholder="e.g. Toner – Black, Drum, Fuser"><datalist id="ptypeList">
           <option value="Toner – Black"><option value="Toner – Cyan"><option value="Toner – Magenta"><option value="Toner – Yellow"><option value="Toner set">
           <option value="Drum / imaging unit"><option value="Fuser"><option value="Waste toner cartridge"><option value="Transfer belt"><option value="Maintenance kit">
           <option value="Ink cartridge"><option value="Labels"><option value="Paper"><option value="Other"></datalist></div>
         <div class="field"><label for="f_partno">Part / model # <span class="small">(optional)</span></label><input id="f_partno" autocomplete="off" placeholder="e.g. CLT-K404S"></div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label for="f_oh">On hand <span class="small">(optional)</span></label><input id="f_oh" type="number" min="0" step="1" placeholder="Not counted"><span class="hint">Counted in order units. Goes up automatically when an order is marked received.</span></div>
-        <div class="field"><label for="f_min">Reorder when on hand is at or below</label><input id="f_min" type="number" min="0" step="1" placeholder="No minimum"><span class="hint">Shows <b>Low</b> and counts as due when it gets there.</span></div>
-      </div>
-      <div class="field" id="f_devWrap"><label>Used in</label><div class="checks" id="f_devs"></div></div>
+        </div>
+        <div class="field" id="f_devWrap"><label>Used in</label><div class="checks" id="f_devs"></div></div>
+      </details>
       <div class="field"><label for="f_notes">Notes</label><textarea id="f_notes" rows="2" placeholder="Where it's stored, who uses it…"></textarea></div>
     </div>
     <div class="df">
@@ -1688,12 +1698,25 @@ $("linkForm").addEventListener("submit", () => {
   save(); render(); toast("Supplies updated");
 });
 
+/* photo link in the supply form: keep a photo taken with the camera unless a link is pasted over it */
+function photoFromForm(){
+  const v = fixUrl($("f_photo").value), cur = editingId && item(editingId) ? item(editingId).photo || "" : "";
+  return v || (/^data:/.test(cur) ? cur : "");
+}
+function showPhotoPrev(src){ const im = $("f_photoPrev"); im.hidden = !src; if (src) im.src = src; }
+$("f_photo").addEventListener("input", () => showPhotoPrev(fixUrl($("f_photo").value) || (editingId && item(editingId) && /^data:/.test(item(editingId).photo || "") ? item(editingId).photo : "")));
+$("f_photoPrev").addEventListener("error", () => { $("f_photoPrev").hidden = true; });
+
 /* item dialog */
 function openItem(id, forDev, keep){
   editingId = id;
   const it = id ? item(id) : Object.assign({ name:"", category: forDev ? "Printers & labels" : "", unit: forDev ? "cartridge" : "", qty:1, packSize:"", url:"", notes:"", interval:null, deviceIds: forDev ? [forDev] : [] }, keep || {});
   $("btnSaveAnother").style.display = id ? "none" : "";
   $("f_ptype").value = it.partType || ""; $("f_partno").value = it.partNo || "";
+  $("f_photo").value = /^data:/.test(it.photo || "") ? "" : (it.photo || ""); $("f_photo").placeholder = /^data:/.test(it.photo || "") ? "Using a photo you took — paste a link to replace it" : "Paste the image address"; showPhotoPrev(it.photo || "");
+  const isPart = forDev || (it.deviceIds || []).length || it.partType || it.partNo || /printer/i.test(it.category || "");
+  $("f_printerBox").open = !!isPart;
+  $("f_stockBox").open = !!isPart || counted(it) || (it.minOnHand != null && it.minOnHand !== "");
   $("f_oh").value = counted(it) ? +it.onHand : ""; $("f_min").value = it.minOnHand != null ? it.minOnHand : "";
   const devs = state.devices.slice().sort((a,b) => a.name.localeCompare(b.name));
   $("f_devWrap").style.display = devs.length ? "" : "none";
@@ -1712,6 +1735,7 @@ function saveItemForm(){
     interval: $("f_int").value ? Math.max(1, Math.round(+$("f_int").value)) : null,
     url: cleanUrl($("f_url").value), notes: $("f_notes").value.trim(),
     partType: $("f_ptype").value.trim(), partNo: $("f_partno").value.trim(),
+    photo: photoFromForm(),
     deviceIds: [...$("f_devs").querySelectorAll("input:checked")].map(x => x.value) };
   const oh = $("f_oh").value.trim(), mn = $("f_min").value.trim();
   if (oh !== "") data.onHand = Math.max(0, Math.round(+oh || 0));
@@ -1720,7 +1744,7 @@ function saveItemForm(){
   if (editingId) { const it = item(editingId); Object.assign(it, data); if (oh === "") delete it.onHand; ["partType","partNo"].forEach(k => { if (it[k] === undefined) delete it[k]; }); }
   let it;
   if (editingId) it = item(editingId);
-  else { it = Object.assign({ id: uid(), photo:"", changes:[] }, data); state.items.push(it); }
+  else { it = Object.assign({ id: uid(), changes:[] }, data); state.items.push(it); }
   save(); return it;
 }
 $("itemForm").addEventListener("submit", e => {
@@ -1733,7 +1757,7 @@ $("btnSaveAnother").onclick = () => {
   const keep = { category: $("f_cat").value.trim(), unit: $("f_unit").value.trim(), deviceIds: [...$("f_devs").querySelectorAll("input:checked")].map(x => x.value) };
   const it = saveItemForm(); if (!it) return;
   render(); toast("Added " + it.name + " — enter the next one");
-  openItem(null, null, keep); $("f_name").focus();
+  openItem(null, null, keep); if (keep.deviceIds.length) { $("f_printerBox").open = true; $("f_stockBox").open = true; } $("f_name").focus();
 };
 $("btnDelItem").onclick = () => {
   const it = item(editingId);
